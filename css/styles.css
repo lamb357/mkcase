@@ -21,24 +21,24 @@ html, body {
   width: 100%; height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+  touch-action: pan-y;          /* 全局禁横滑（含双指捏合缩放） */
 }
 body {
   font-family: var(--font-text);
   background: #f0f0f0;
   -webkit-font-smoothing: antialiased;
-  /* 桌面预览时居中显示模拟器；移动设备上 .phone 100vw/100dvh 自然铺满 */
+  /* 桌面预览时居中显示模拟器；H5 viewport 已锁 390 等比缩放到屏宽 */
   display: flex; justify-content: center; align-items: flex-start;
 }
 
-/* Phone canvas — 移动端铺满整屏，桌面端按 390×844 居中模拟 */
+/* Phone canvas — viewport=390 锁定后，width 380px 即为 device 屏宽 */
 .phone {
-  width: 100vw;
-  max-width: 390px;
-  height: 100dvh;
-  max-height: 844px;
+  width: 390px;
+  height: 100dvh;             /* dvh: 适配 iOS Safari 工具栏伸缩 */
   background: #f0f0f0;
   position: relative;
   overflow: hidden;
+  touch-action: pan-y;          /* 禁横向手势 */
 }
 /* 桌面浏览器：保留模拟器投影；移动浏览器：全屏无投影 */
 @media (hover: hover) and (pointer: fine) {
@@ -119,11 +119,16 @@ body {
 .scroll {
   position: absolute;
   top: calc(var(--top-stack-h) + var(--filter-h)); left: 0; right: 0; bottom: 84px;
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overflow-x: hidden;           /* 禁止横向滚动 */
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  touch-action: pan-y;          /* 触摸手势仅允许纵向 */
   transition: top 0.22s ease;
 }
 .scroll::-webkit-scrollbar { display: none; }
+/* scroll 内的 img / 子元素如果宽度溢出，强制裁切到容器宽度 */
+.scroll > * { max-width: 100%; }
 
 /* ===========================================================
    Filter region — sticky 钉在 top-stack 下方，不随内容滚动
