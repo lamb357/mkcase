@@ -109,15 +109,22 @@
   });
 
   // sb-row 重构成"外层胶囊 + 内层滑动"，滚动监听挂在 .sb-row-inner 上
+  // ribbon 用 rAF 同步、translate3d + will-change 触发 GPU 合成层，避免延迟
   const sbInner = document.querySelector('.sb-row-inner');
   const ribbon = document.querySelector('.ribbon-floating');
   if (sbInner && ribbon) {
     const MK_VISIBLE_RANGE = 80;
+    let pendingSl = 0;
+    let rafId = 0;
+    const applyRibbon = function () {
+      rafId = 0;
+      const sl = pendingSl;
+      ribbon.style.transform = 'translate3d(' + (-sl) + 'px,0,0)';
+      ribbon.style.opacity = Math.max(0, 1 - sl / MK_VISIBLE_RANGE).toFixed(2);
+    };
     const syncRibbon = function () {
-      const sl = sbInner.scrollLeft;
-      ribbon.style.transform = 'translateX(' + (-sl) + 'px)';
-      const opacity = Math.max(0, 1 - sl / MK_VISIBLE_RANGE);
-      ribbon.style.opacity = opacity.toFixed(2);
+      pendingSl = sbInner.scrollLeft;
+      if (!rafId) rafId = requestAnimationFrame(applyRibbon);
     };
     sbInner.addEventListener('scroll', syncRibbon, { passive: true });
     syncRibbon();
