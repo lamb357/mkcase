@@ -21,6 +21,13 @@
     const t = scrollEl.scrollTop;
     const delta = t - lastTop;
 
+    // sticky-bg 在滚动离开顶部后保持显示，回到顶部消失
+    if (t > 0) {
+      phone.classList.add('scrolled-down');
+    } else {
+      phone.classList.remove('scrolled-down');
+    }
+
     // banner 收起/展开（位置阈值，迟滞防抖）
     if (t > 8 && !phone.classList.contains('scrolled')) {
       phone.classList.add('scrolled');
@@ -54,14 +61,33 @@
     }, { passive: true });
     el.addEventListener('touchmove', function (e) {
       const y = e.touches[0].clientY;
-      scrollEl.scrollTop += (lastY - y);
+      const dy = lastY - y;
+      // scroll 顶部时向下拖（dy<0）：阻止冒泡到页面，防止 H5 浏览器下拉
+      if (scrollEl.scrollTop <= 0 && dy < 0) {
+        e.preventDefault();
+        lastY = y;
+        return;
+      }
+      scrollEl.scrollTop += dy;
       lastY = y;
-    }, { passive: true });
+    }, { passive: false });
     el.addEventListener('wheel', function (e) {
       scrollEl.scrollTop += e.deltaY;
       e.preventDefault();
     }, { passive: false });
   });
+
+  // === scroll 顶部禁止下拉（防止 H5 浏览器 overscroll/下拉刷新）===
+  let scrollStartY = 0;
+  scrollEl.addEventListener('touchstart', function (e) {
+    scrollStartY = e.touches[0].clientY;
+  }, { passive: true });
+  scrollEl.addEventListener('touchmove', function (e) {
+    const y = e.touches[0].clientY;
+    if (scrollEl.scrollTop <= 0 && y > scrollStartY) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 
   // === ribbon 跟随 sb-row 横向滚动 ===
   // ribbon 在 filter-region 顶层独立浮动，初始 left:27px 对齐 MK 体育左上

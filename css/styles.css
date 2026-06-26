@@ -210,8 +210,10 @@ body {
   );
   -webkit-backdrop-filter: blur(1.5px);
           backdrop-filter: blur(1.5px);
-  transition: top 0.22s ease, height 0.22s ease;
+  opacity: 0;                                   /* 默认隐藏，滚动时由 .scrolling class 显示 */
+  transition: top 0.22s ease, height 0.22s ease, opacity 0.18s ease;
 }
+.phone.scrolled-down .sticky-bg { opacity: 1; }
 
 /* ===========================================================
    Filter region — sticky 钉在 top-stack 下方，不随内容滚动 (Figma 1525:111758)
