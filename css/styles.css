@@ -19,7 +19,7 @@
 :root {
   /* Top stack 折叠状态：banner 展开=213, 收起=141 */
   --top-stack-h: 213px;
-  --filter-h: 173px;
+  --filter-h: 153px;
   --text: #232323;
   --text-weak: #5c5c5c;
   --text-subtle: #787878;
@@ -151,43 +151,37 @@ body {
   /* 跟随 filter-region 同步动画（top-stack-h 变化时 banner 收起/展开） */
   transition: top 0.22s ease;
 }
-.sticky-headers .sh-sub {
+.sticky-headers .sh-img {
   display: block;
-  width: 390px; height: 28px;
-}
-.sticky-headers .sh-title {
-  display: block;
-  width: 374px; height: 46px;
-  margin: 0 8px;
+  width: 390px; height: 82px;
 }
 
-/* sticky 头部总高 = sub-status(28) + bet-title(46) = 74 */
-:root { --sticky-h: 74px; }
+/* sticky 头部总高 = sub-status(28) + gap(8) + bet-title(46) = 82 (Figma 1526:125966) */
+:root { --sticky-h: 82px; }
 
 .scroll {
   position: absolute;
-  /* 从 phone 顶部 0 开始，padding-top 内置预留所有 sticky-headers 高度 */
-  top: 0; left: 0; right: 0; bottom: 84px;
-  /* 顶部 padding = top-stack + filter-region + sticky 浮层（三层总高） */
-  padding-top: calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h));
+  /* 从 top-stack 底部开始，padding-top 预留 filter-region + sticky-headers 高度 */
+  top: var(--top-stack-h); left: 0; right: 0; bottom: 84px;
+  padding-top: calc(var(--filter-h) + var(--sticky-h));
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;           /* 禁止横向滚动 */
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   touch-action: pan-y;          /* 触摸手势仅允许纵向 */
-  transition: padding-top 0.22s ease;
+  transition: top 0.22s ease, padding-top 0.22s ease;
   /* padding 区全部渐隐：scroll 内容滚入此区域时被隐藏，sticky 浮层独立显示 */
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    #000 calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h)),
+    #000 calc(var(--filter-h) + var(--sticky-h)),
     #000 100%
   );
           mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    #000 calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h)),
+    #000 calc(var(--filter-h) + var(--sticky-h)),
     #000 100%
   );
   -webkit-mask-repeat: no-repeat;
@@ -198,8 +192,30 @@ body {
 .scroll > * { max-width: 100%; }
 
 /* ===========================================================
-   Filter region — sticky 钉在 top-stack 下方，不随内容滚动
-   padding 8 | sportsbook 32 | gap 6 | time-balance 32 | gap 6 | sport-filter 81 | padding 8 = 173
+   Sticky 区背景层 (Figma 1526:125967)
+   覆盖 filter-region + sticky-headers，提供顶部半透明灰渐变 + 1.5px backdrop blur
+   =========================================================== */
+.sticky-bg {
+  position: absolute;
+  top: var(--top-stack-h);
+  left: 0; right: 0;
+  width: 390px;
+  height: calc(var(--filter-h) + var(--sticky-h));
+  z-index: 8;                                   /* 在 filter-region(10) / sticky-headers(9) 之下 */
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(236, 236, 236, 0.4) 0%,
+    rgba(236, 236, 236, 0) 100%
+  );
+  -webkit-backdrop-filter: blur(1.5px);
+          backdrop-filter: blur(1.5px);
+  transition: top 0.22s ease, height 0.22s ease;
+}
+
+/* ===========================================================
+   Filter region — sticky 钉在 top-stack 下方，不随内容滚动 (Figma 1525:111758)
+   padding 8 | sportsbook 32 | gap 4 | time-balance 32 | gap 4 | sport-filter 65 | padding 8 = 153
    =========================================================== */
 .filter-region {
   position: absolute;
@@ -210,7 +226,7 @@ body {
   background: transparent;
   padding: 8px;
   display: flex; flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   transition: top 0.22s ease;
   pointer-events: none;          /* 容器透传点击，避免拦截 */
 }
@@ -372,9 +388,9 @@ body {
 
 /* --- Row 3: sport filter card --- */
 .sport-card {
-  width: 374px; height: 81px;
+  width: 374px; height: 65px;
   border-radius: 12px;
-  padding: 8px;
+  padding: 4px;
   display: flex; flex-direction: column;
   gap: 4px;
 }
@@ -740,7 +756,6 @@ body {
   display: block;
   width: 390px;
   height: auto;
-  margin-top: -46px;
   user-select: none;
   pointer-events: none;
 }
