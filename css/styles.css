@@ -352,7 +352,7 @@ body {
 /* --- Row 2: time tabs + balance --- */
 .time-bal-row {
   width: 374px; height: 32px;
-  display: flex; gap: 10px;
+  display: flex; gap: 6px;
 }
 .time-tabs {
   flex: 1; height: 32px;
@@ -392,25 +392,36 @@ body {
 .sport-card {
   width: 374px; height: 65px;
   border-radius: 12px;
-  padding: 4px;
+  padding: 4px 8px;
   display: flex; flex-direction: column;
   gap: 4px;
 }
 .sport-card .types,
 .sport-card .leagues {
   --fade: 18px;
+  /* content-box: height=24 是内容区，padding 仅向外扩张盒子，不挤压 .mt 24h
+     padding-block 给 overflow-x:auto 被强制裁切的 overflow-y 留出垂直余地，
+     margin-block 抵消，外部布局仍按 24h 排布 */
+  box-sizing: content-box;
+  height: 24px;
+  padding-block: 8px;
+  margin-block: -8px;
   display: flex; align-items: center; gap: 8px;
-  overflow-y: hidden;
+  overflow-x: auto; overflow-y: visible;
+  scrollbar-width: none;
 }
+.sport-card .types::-webkit-scrollbar,
+.sport-card .leagues::-webkit-scrollbar { display: none; }
 
 /* menu_type chip: structured (icon + label + count) — Figma 1525:111814 球类筛选 24h */
 .mt {
   height: 24px;
   border-radius: 20px;
   display: inline-flex; align-items: center;
-  padding: 2px;
+  padding: 2px 4px;
   gap: 2px;
   font-size: 12px;
+  line-height: 16px;
   color: var(--text-weak);
   flex-shrink: 0;
   white-space: nowrap;
@@ -418,11 +429,11 @@ body {
 .mt.active {
   background: var(--layer-secondary-50);
   border-radius: 100px;
-  padding: 2px 8px 2px 2px;
+  padding: 2px 8px 2px 4px;
   color: var(--text-primary);
 }
-.mt .name { font-weight: 500; }
-.mt.active .name { font-weight: 600; }
+.mt .name { font-weight: 400; }
+.mt.active .name { font-weight: 500; }
 .mt .cnt { font-family: var(--font-num); font-weight: 600; }
 .mt.active .cnt { font-weight: 700; }
 
@@ -455,8 +466,8 @@ body {
   padding: 4px 8px 4px 4px;
   color: var(--text-primary);
 }
-.lt .name { font-weight: 500; }
-.lt.active .name { font-weight: 600; }
+.lt .name { font-weight: 400; }
+.lt.active .name { font-weight: 500; }
 
 .lt-icon {
   width: 20px; height: 20px;
@@ -474,6 +485,7 @@ body {
   background: var(--border-divide-alt);
 }
 .sport-card .leagues-wrap {
+  height: 24px;
   display: flex; align-items: center; gap: 8px;
 }
 .sport-card .leagues-wrap .leagues { flex: 1; }
