@@ -166,28 +166,28 @@ body {
 
 .scroll {
   position: absolute;
-  /* 上提到 top-stack 底部，让滚动内容可以"穿过" filter-region 区域显示 */
-  top: var(--top-stack-h); left: 0; right: 0; bottom: 84px;
-  /* 顶部 padding = filter-region + sticky 浮层高度，内容初始位置在 sticky 之下 */
-  padding-top: calc(var(--filter-h) + var(--sticky-h));
+  /* 从 phone 顶部 0 开始，padding-top 内置预留所有 sticky-headers 高度 */
+  top: 0; left: 0; right: 0; bottom: 84px;
+  /* 顶部 padding = top-stack + filter-region + sticky 浮层（三层总高） */
+  padding-top: calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h));
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;           /* 禁止横向滚动 */
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   touch-action: pan-y;          /* 触摸手势仅允许纵向 */
-  transition: top 0.22s ease;
-  /* 顶部 173px (= filter-region 高度) 渐隐：内容滑到 filter-region 顶部时完全消失 */
+  transition: padding-top 0.22s ease;
+  /* padding 区全部渐隐：scroll 内容滚入此区域时被隐藏，sticky 浮层独立显示 */
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    #000 var(--filter-h),
+    #000 calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h)),
     #000 100%
   );
           mask-image: linear-gradient(
     to bottom,
     transparent 0,
-    #000 var(--filter-h),
+    #000 calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h)),
     #000 100%
   );
   -webkit-mask-repeat: no-repeat;
