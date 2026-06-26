@@ -654,19 +654,20 @@ body {
 }
 .tabbar .item.active { color: var(--text); font-weight: 600; }
 
-/* tab-icon: 24×24 sprite cropped from common-tabbar.png (390×84) */
+/* tab-icon: 24×24 sprite cropped from common-tabbar.png
+   PNG 实测 780×188 (设计 390×94，非预期 84)，按 PNG 真实比例缩放避免变形 */
 .tab-icon {
   width: 24px; height: 24px;
   background-image: url("../assets/common-tabbar.png");
-  background-size: 390px 84px;
+  background-size: 390px 94px;
   background-repeat: no-repeat;
 }
-/* common_tabbar 单 item 50h, py=4 + flex justify-center (icon 24h + label 11h) → icon top y ≈ 7.5 */
-.tab-icon[data-id="home"]    { background-position: -27px -7.5px; }
-.tab-icon[data-id="promote"] { background-position: -105px -7.5px; }
-.tab-icon[data-id="service"] { background-position: -183px -7.5px; }
-.tab-icon[data-id="sponsor"] { background-position: -261px -7.5px; }
-.tab-icon[data-id="uc"]      { background-position: -339px -7.5px; }
+/* 5 个 tab item 各 78w，icon 左上 x=27+78n；icon 顶部 y ≈ 16.5 (实测) */
+.tab-icon[data-id="home"]    { background-position: -27px -16.5px; }
+.tab-icon[data-id="promote"] { background-position: -105px -16.5px; }
+.tab-icon[data-id="service"] { background-position: -183px -16.5px; }
+.tab-icon[data-id="sponsor"] { background-position: -261px -16.5px; }
+.tab-icon[data-id="uc"]      { background-position: -339px -16.5px; }
 
 .tabbar .bar-area {
   height: 34px;
