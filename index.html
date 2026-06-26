@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#151515">
+<title>MK_APP 首页 · 体育</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- ===== Sticky top stack (Figma 1417:94613) ===== -->
+  <div class="top-stack">
+
+    <!-- Status Bar + TopNavigation 91h (Figma 333:3180-3182) — 整图 topnav.png -->
+    <div class="ts-topnav"></div>
+
+    <!-- mk_banner 362×64 (Figma 1417:94616) — 透明 PNG -->
+    <div class="ts-banner">
+      <img src="assets/mk-banner.png" alt="原生体育APP 业内最高赔率 · www.mk.com">
+    </div>
+
+    <!-- venuetabs 390×50 (Figma 1417:94617) — 整图 venuetabs.png + 9 个透明交互层 -->
+    <div class="ts-venue">
+      <div class="v" data-id="hot"></div>
+      <div class="v" data-id="live"></div>
+      <div class="v sel" data-id="soccer"></div>
+      <div class="v" data-id="casino"></div>
+      <div class="v" data-id="slot"></div>
+      <div class="v" data-id="esports"></div>
+      <div class="v" data-id="lottery"></div>
+      <div class="v" data-id="board"></div>
+      <div class="v" data-id="ent"></div>
+    </div>
+
+  </div>
+
+  <!-- ============ Filter region: sticky 钉在 top-stack 下方 ============ -->
+  <div class="filter-region">
+
+      <!-- Row 1: sportsbook switcher -->
+      <div class="sb-row glass-pill fade-edge-x">
+        <div class="sb-item active">
+          <img class="logo" src="assets/mk-logo.png" alt="">
+          <span class="label">MK体育</span>
+          <img class="ribbon" src="assets/promo-ribbon.png" alt="高达 1.18% 无限返水">
+        </div>
+        <div class="sb-item">
+          <img class="logo" src="assets/panda-logo.png" alt="">
+          <span class="label">熊猫体育</span>
+        </div>
+        <div class="sb-item">
+          <img class="logo" src="assets/im-logo.png" alt="">
+          <span class="label">IM体育</span>
+        </div>
+        <div class="sb-item">
+          <img class="logo" src="assets/saba-logo.png" alt="">
+          <span class="label">沙巴体育</span>
+        </div>
+      </div>
+
+      <!-- Row 2: time tabs + balance -->
+      <div class="time-bal-row">
+        <div class="time-tabs glass-pill">
+          <div class="tt active">今日</div>
+          <div class="tt">滚球</div>
+          <div class="tt">早盘</div>
+          <div class="tt">串关</div>
+          <div class="tt">冠军</div>
+        </div>
+        <div class="balance-pill glass-pill">
+          <img src="assets/yen-coin.png" alt="">
+          <span class="amt">35,102,652.00</span>
+        </div>
+      </div>
+
+      <!-- Row 3: 球类筛选 + 联赛筛选 -->
+      <div class="sport-card glass-pill">
+        <div class="types fade-edge-x">
+          <div class="mt">
+            <span class="mt-icon" data-id="anchor"></span>
+            <span class="name">主播</span>
+            <span class="cnt">80</span>
+          </div>
+          <div class="mt">
+            <span class="mt-icon" data-id="favorite"></span>
+            <span class="name">收藏</span>
+            <span class="cnt">206</span>
+          </div>
+          <div class="mt active">
+            <span class="mt-icon" data-id="football"></span>
+            <span class="name">足球</span>
+            <span class="cnt">2850</span>
+          </div>
+          <div class="mt">
+            <span class="mt-icon" data-id="basketball"></span>
+            <span class="name">篮球</span>
+            <span class="cnt">690</span>
+          </div>
+          <div class="mt">
+            <span class="mt-icon" data-id="esports"></span>
+            <span class="name">电竞</span>
+            <span class="cnt">999</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="leagues-wrap">
+          <div class="leagues fade-edge-x">
+            <div class="lt"><span class="name">全部</span></div>
+            <div class="lt">
+              <span class="lt-icon" data-id="ucl"></span>
+              <span class="name">欧冠</span>
+            </div>
+            <div class="lt">
+              <span class="lt-icon" data-id="pl"></span>
+              <span class="name">英超</span>
+            </div>
+            <div class="lt active">
+              <span class="lt-icon" data-id="seriea"></span>
+              <span class="name">意甲</span>
+            </div>
+            <div class="lt">
+              <span class="lt-icon" data-id="laliga"></span>
+              <span class="name">西甲</span>
+            </div>
+            <div class="lt">
+              <span class="lt-icon" data-id="ligue1"></span>
+              <span class="name">法甲</span>
+            </div>
+          </div>
+          <button class="search-btn" type="button" aria-label="搜索">
+            <img src="assets/search-icon.png" alt="">
+          </button>
+        </div>
+      </div>
+  </div>
+  <!-- ============ Filter region END ============ -->
+
+  <!-- ===== Scrollable content (1458:102234 Frame 1686552903) ===== -->
+  <main class="scroll">
+    <img class="scroll-content" src="assets/scroll-content.png" alt="赛事内容">
+    <div class="footer-spacer"></div>
+  </main>
+
+  <!-- ============ Bottom floating sport tabbar: 切图 + 文字 ============ -->
+  <div class="bottom-float">
+    <div class="sp">
+      <svg class="ico" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.25 1.5C12.4926 1.5 13.5 2.50736 13.5 3.75V4.63086C14.3734 4.93999 15 5.77067 15 6.75V14.25C15 15.4926 13.9926 16.5 12.75 16.5H5.25C4.00736 16.5 3 15.4926 3 14.25V3.75C3 2.50736 4.00736 1.5 5.25 1.5H11.25ZM4.125 5.625V13.875C4.125 14.7034 4.79657 15.375 5.625 15.375H12.375C13.2034 15.375 13.875 14.7034 13.875 13.875V7.125C13.875 6.29657 13.2034 5.625 12.375 5.625H4.125ZM5.25 2.625C4.83579 2.625 4.5 2.96079 4.5 3.375C4.5 3.78921 4.83579 4.125 5.25 4.125H12V3.375C12 2.96079 11.6642 2.625 11.25 2.625H5.25Z" fill="currentColor"/><path d="M5.25 8.0625C5.25 7.75184 5.50184 7.5 5.8125 7.5H12.1875C12.4982 7.5 12.75 7.75184 12.75 8.0625C12.75 8.37316 12.4982 8.625 12.1875 8.625H5.8125C5.50184 8.625 5.25 8.37316 5.25 8.0625Z" fill="currentColor"/><path d="M5.25 10.3125C5.25 10.0018 5.50184 9.75 5.8125 9.75H9.1875C9.49816 9.75 9.75 10.0018 9.75 10.3125C9.75 10.6232 9.49816 10.875 9.1875 10.875H5.8125C5.50184 10.875 5.25 10.6232 5.25 10.3125Z" fill="currentColor"/></svg>
+      <span class="label">教程</span>
+    </div>
+    <div class="sp">
+      <svg class="ico" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="3.1875" y1="13.3125" x2="7.3125" y2="13.3125" stroke="currentColor" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/><line x1="3.1875" y1="8.8125" x2="4.3125" y2="8.8125" stroke="currentColor" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/><line x1="3.1875" y1="4.3125" x2="8.0625" y2="4.3125" stroke="currentColor" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/><line x1="9.1875" y1="8.8125" x2="14.0625" y2="8.8125" stroke="currentColor" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/><line x1="12.1875" y1="13.3125" x2="14.0625" y2="13.3125" stroke="currentColor" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/><line x1="6.75" y1="9.75" x2="6.75" y2="8.25" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/><line x1="12.9375" y1="4.3125" x2="14.0625" y2="4.3125" stroke="currentColor" stroke-width="1.125" stroke-linecap="round" stroke-linejoin="round"/><line x1="9.75" y1="14.25" x2="9.75" y2="12.75" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/><line x1="10.5" y1="5.25" x2="10.5" y2="3.75" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="label">设置</span>
+    </div>
+    <div class="sp">
+      <svg class="ico" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 8.0625C6 7.75184 6.25184 7.5 6.5625 7.5H11.4375C11.7482 7.5 12 7.75184 12 8.0625C12 8.37316 11.7482 8.625 11.4375 8.625H6.5625C6.25184 8.625 6 8.37316 6 8.0625Z" fill="currentColor"/><path d="M6.75 10.3125C6.75 10.0018 7.00184 9.75 7.3125 9.75H10.6875C10.9982 9.75 11.25 10.0018 11.25 10.3125C11.25 10.6232 10.9982 10.875 10.6875 10.875H7.3125C7.00184 10.875 6.75 10.6232 6.75 10.3125Z" fill="currentColor"/><path d="M13.1053 3.375H12.4415C12.2867 2.3175 11.3735 1.5 10.2632 1.5H7.73685C6.62653 1.5 5.71327 2.3175 5.55852 3.375H4.89474C3.85012 3.375 3 4.21626 3 5.25V14.625C3 15.6587 3.85012 16.5 4.89474 16.5H13.1053C14.1499 16.5 15 15.6587 15 14.625V5.25C15 4.21626 14.1499 3.375 13.1053 3.375ZM7.73682 2.75001H10.2631C10.7854 2.75001 11.2105 3.17062 11.2105 3.68751C11.2105 4.20439 10.7854 4.62501 10.2631 4.62501H7.73682C7.21449 4.62501 6.78945 4.20439 6.78945 3.68751C6.78945 3.17062 7.21452 2.75001 7.73682 2.75001ZM13.7368 14.625C13.7368 14.97 13.4532 15.25 13.1053 15.25H4.89471C4.54673 15.25 4.26314 14.97 4.26314 14.625V5.25C4.26314 4.905 4.54673 4.62501 4.89471 4.62501H5.74796C6.10417 5.36127 6.85828 5.87502 7.73682 5.87502H10.2631C11.1417 5.87502 11.8958 5.36127 12.252 4.62501H13.1052C13.4532 4.62501 13.7368 4.905 13.7368 5.25V14.625H13.7368Z" fill="currentColor"/></svg>
+      <span class="label">未结算</span>
+    </div>
+    <div class="sp">
+      <svg class="ico" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.1053 3.375H12.4415C12.2867 2.3175 11.3735 1.5 10.2632 1.5H7.73685C6.62653 1.5 5.71327 2.3175 5.55852 3.375H4.89474C3.85012 3.375 3 4.21626 3 5.25V14.625C3 15.6587 3.85012 16.5 4.89474 16.5H13.1053C14.1499 16.5 15 15.6587 15 14.625V5.25C15 4.21626 14.1499 3.375 13.1053 3.375ZM7.73682 2.75001H10.2631C10.7854 2.75001 11.2105 3.17062 11.2105 3.68751C11.2105 4.20439 10.7854 4.62501 10.2631 4.62501H7.73682C7.21449 4.62501 6.78945 4.20439 6.78945 3.68751C6.78945 3.17062 7.21452 2.75001 7.73682 2.75001ZM13.7368 14.625C13.7368 14.97 13.4532 15.25 13.1053 15.25H4.89471C4.54673 15.25 4.26314 14.97 4.26314 14.625V5.25C4.26314 4.905 4.54673 4.62501 4.89471 4.62501H5.74796C6.10417 5.36127 6.85828 5.87502 7.73682 5.87502H10.2631C11.1417 5.87502 11.8958 5.36127 12.252 4.62501H13.1052C13.4532 4.62501 13.7368 4.905 13.7368 5.25V14.625H13.7368Z" fill="currentColor"/><path d="M7.3125 9.375H10.6875C10.7911 9.375 10.875 9.45895 10.875 9.5625C10.875 9.66605 10.7911 9.75 10.6875 9.75H7.3125C7.20895 9.75 7.125 9.66605 7.125 9.5625C7.125 9.45895 7.20895 9.375 7.3125 9.375Z" fill="currentColor"/><path d="M7.3125 9.375H10.6875C10.7911 9.375 10.875 9.45895 10.875 9.5625C10.875 9.66605 10.7911 9.75 10.6875 9.75H7.3125C7.20895 9.75 7.125 9.66605 7.125 9.5625C7.125 9.45895 7.20895 9.375 7.3125 9.375Z" stroke="currentColor" stroke-width="0.5625"/><path d="M7.3125 11.25H10.6875C10.7911 11.25 10.875 11.3339 10.875 11.4375C10.875 11.5411 10.7911 11.625 10.6875 11.625H7.3125C7.20895 11.625 7.125 11.5411 7.125 11.4375C7.125 11.3339 7.20895 11.25 7.3125 11.25Z" fill="currentColor"/><path d="M7.3125 11.25H10.6875C10.7911 11.25 10.875 11.3339 10.875 11.4375C10.875 11.5411 10.7911 11.625 10.6875 11.625H7.3125C7.20895 11.625 7.125 11.5411 7.125 11.4375C7.125 11.3339 7.20895 11.25 7.3125 11.25Z" stroke="currentColor" stroke-width="0.5625"/><path d="M9 9V12.75" stroke="currentColor" stroke-width="1.125" stroke-linecap="round"/><path d="M7.5 7.5L9 9L10.5 7.5" stroke="currentColor" stroke-width="1.125" stroke-linecap="round"/></svg>
+      <span class="label">已结算</span>
+    </div>
+    <div class="sp">
+      <svg class="ico" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.3892 7.00976H15.7642V3.63477" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.3733 13.3734C12.5082 14.2393 11.4057 14.8291 10.2053 15.0682C9.00492 15.3074 7.76056 15.1852 6.62965 14.717C5.49874 14.2488 4.53208 13.4558 3.85197 12.4381C3.17186 11.4205 2.80884 10.224 2.80884 9C2.80884 7.77602 3.17186 6.57953 3.85197 5.56189C4.53208 4.54425 5.49874 3.75118 6.62965 3.28302C7.76056 2.81485 9.00492 2.69261 10.2053 2.93176C11.4057 3.17092 12.5082 3.76072 13.3733 4.62657L15.764 7.01016" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="label">刷新</span>
+    </div>
+  </div>
+  <!-- ============ Bottom floating END ============ -->
+
+  <!-- ============ Bottom common tabbar: 切图 + 文字 ============ -->
+  <nav class="tabbar">
+    <div class="row">
+      <div class="item active">
+        <span class="tab-icon" data-id="home"></span>
+        <span class="label">首页</span>
+      </div>
+      <div class="item">
+        <span class="tab-icon" data-id="promote"></span>
+        <span class="label">优惠</span>
+      </div>
+      <div class="item">
+        <span class="tab-icon" data-id="service"></span>
+        <span class="label">客服</span>
+      </div>
+      <div class="item">
+        <span class="tab-icon" data-id="sponsor"></span>
+        <span class="label">赞助</span>
+      </div>
+      <div class="item">
+        <span class="tab-icon" data-id="uc"></span>
+        <span class="label">我的</span>
+      </div>
+    </div>
+    <div class="bar-area">
+      <div class="home-indicator"></div>
+    </div>
+  </nav>
+  <!-- ============ tabbar END ============ -->
+
+</div>
+
+<!-- Liquid Glass SVG filter (iOS 26 风格) -->
+<svg class="liquid-glass-defs" aria-hidden="true">
+  <filter id="liquid-glass" x="-30%" y="-30%" width="160%" height="160%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="3" seed="5" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="70" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <!-- 强折射：用于点击态边缘 ring -->
+  <filter id="liquid-glass-strong" x="-60%" y="-60%" width="220%" height="220%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.005 0.010" numOctaves="3" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="200" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <!-- 全椭圆扭曲：让点击态玻璃主体内 backdrop 大幅折射 -->
+  <filter id="liquid-glass-soft" x="-40%" y="-40%" width="180%" height="180%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.010 0.016" numOctaves="3" seed="11" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="55" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<script src="js/main.js" defer></script>
+
+</body>
+</html>
