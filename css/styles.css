@@ -194,8 +194,10 @@ body {
 .fade-edge-x {
   --fade: 64px;
   overflow-x: auto;
+  overflow-y: hidden;                 /* 禁纵向滚动 */
   -webkit-overflow-scrolling: touch;  /* iOS 惯性滚动 */
   scrollbar-width: none;
+  touch-action: pan-x;                /* 仅响应横向手势，纵向手势冒泡给祖先 */
   -webkit-mask-image: linear-gradient(
     to right,
     #000 0,
@@ -241,7 +243,7 @@ body {
   pointer-events: none;
   user-select: none;
   will-change: transform, opacity;
-  transition: opacity 0.15s ease;
+  /* 不加 transition：跟随滚动必须 0 延迟，由 JS scroll 事件实时同步 */
 }
 .sb-item {
   height: 24px;
