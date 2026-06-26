@@ -27,24 +27,26 @@ body {
   font-family: var(--font-text);
   background: #f0f0f0;
   -webkit-font-smoothing: antialiased;
-  /* 桌面预览时居中显示模拟器；H5 viewport 已锁 390 等比缩放到屏宽 */
-  display: flex; justify-content: center; align-items: flex-start;
 }
 
-/* Phone canvas — viewport=390 锁定后，width 380px 即为 device 屏宽 */
+/* === Phone canvas: 390 设计稿 + transform scale 适配 device 宽度 ===
+   JS 计算 --phone-scale = window.innerWidth / 390 实时写入
+   --phone-h: scaled 后的实际视觉高度，用于 body padding 防止下方空白 */
 .phone {
   width: 390px;
-  height: 100dvh;             /* dvh: 适配 iOS Safari 工具栏伸缩 */
+  height: 844px;                /* 设计稿固定高度，scale 后视觉跟随 */
   background: #f0f0f0;
   position: relative;
   overflow: hidden;
-  touch-action: pan-y;          /* 禁横向手势 */
+  touch-action: pan-y;
+  transform: scale(var(--phone-scale, 1));
+  transform-origin: top left;
 }
-/* 桌面浏览器：保留模拟器投影；移动浏览器：全屏无投影 */
+/* 桌面浏览器（精确指针）：取消 scale，居中模拟器投影 */
 @media (hover: hover) and (pointer: fine) {
-  body { background: #2a2a2a; min-height: 100vh; }
+  body { background: #2a2a2a; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
   .phone {
-    width: 390px; height: 844px;
+    transform: none;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
   }
 }

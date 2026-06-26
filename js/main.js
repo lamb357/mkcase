@@ -5,6 +5,17 @@
   const phone = document.querySelector('.phone');
   const scrollEl = document.querySelector('.scroll');
   if (!phone || !scrollEl) return;
+
+  // === 整页根据浏览器宽度等比缩放（design width = 390px）===
+  // 仅在触屏设备启用；桌面端 @media (hover) 已经覆盖 transform: none
+  const DESIGN_W = 390;
+  const fitPhone = function () {
+    const scale = window.innerWidth / DESIGN_W;
+    document.documentElement.style.setProperty('--phone-scale', scale.toFixed(4));
+  };
+  fitPhone();
+  window.addEventListener('resize', fitPhone);
+  window.addEventListener('orientationchange', fitPhone);
   let lastTop = scrollEl.scrollTop;
   scrollEl.addEventListener('scroll', function () {
     const t = scrollEl.scrollTop;
