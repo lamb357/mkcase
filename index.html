@@ -43,24 +43,28 @@
   <!-- ============ Filter region: sticky 钉在 top-stack 下方 ============ -->
   <div class="filter-region">
 
-      <!-- Row 1: sportsbook switcher -->
-      <div class="sb-row glass-pill fade-edge-x">
-        <div class="sb-item active">
-          <img class="logo" src="assets/mk-logo.png" alt="">
-          <span class="label">MK体育</span>
-          <img class="ribbon" src="assets/promo-ribbon.png" alt="高达 1.18% 无限返水">
-        </div>
-        <div class="sb-item">
-          <img class="logo" src="assets/panda-logo.png" alt="">
-          <span class="label">熊猫体育</span>
-        </div>
-        <div class="sb-item">
-          <img class="logo" src="assets/im-logo.png" alt="">
-          <span class="label">IM体育</span>
-        </div>
-        <div class="sb-item">
-          <img class="logo" src="assets/saba-logo.png" alt="">
-          <span class="label">沙巴体育</span>
+      <!-- ribbon 提到 sb-row 外，独立绝对定位，避免被 sb-row mask/overflow 裁切 -->
+      <img class="ribbon-floating" src="assets/promo-ribbon.png" alt="高达 1.18% 无限返水">
+
+      <!-- Row 1: sportsbook switcher (外层胶囊 .sb-row，内层滑动 .sb-row-inner) -->
+      <div class="sb-row glass-pill">
+        <div class="sb-row-inner fade-edge-x">
+          <div class="sb-item active">
+            <img class="logo" src="assets/mk-logo.png" alt="">
+            <span class="label">MK体育</span>
+          </div>
+          <div class="sb-item">
+            <img class="logo" src="assets/panda-logo.png" alt="">
+            <span class="label">熊猫体育</span>
+          </div>
+          <div class="sb-item">
+            <img class="logo" src="assets/im-logo.png" alt="">
+            <span class="label">IM体育</span>
+          </div>
+          <div class="sb-item">
+            <img class="logo" src="assets/saba-logo.png" alt="">
+            <span class="label">沙巴体育</span>
+          </div>
         </div>
       </div>
 

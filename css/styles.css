@@ -64,7 +64,7 @@ body {
 .ts-topnav {
   width: 390px;
   height: 91px;
-  background: url('assets/topnav.png') no-repeat 0 0;
+  background: url('../assets/topnav.png') no-repeat 0 0;
   background-size: 390px 99px;
   flex-shrink: 0;
 }
@@ -89,7 +89,7 @@ body {
   margin-top: 8px;
   width: 390px;
   height: 50px;
-  background: url('assets/venuetabs.png') no-repeat 0 0;
+  background: url('../assets/venuetabs.png') no-repeat 0 0;
   background-size: 390px 50px;
   flex-shrink: 0;
   display: flex;
@@ -140,10 +140,48 @@ body {
   gap: 6px;
   transition: top 0.22s ease;
 }
+/* === Liquid Glass 容器（参照 .bottom-float 写法） ===
+   适用于 .sb-row / .time-tabs / .balance-pill / .sport-card
+   border-radius 由各自规则决定，box-shadow / backdrop-filter 在此统一 */
 .glass-pill {
-  background: linear-gradient(180deg, #ffffff 0%, #f6f6f6 100%);
-  box-shadow: var(--shadow-md);
   position: relative;
+  isolation: isolate;
+  /* 玻璃主体：半透明白 + 强模糊 + 饱和增强 → iOS 26 风格曲面反射 */
+  background: rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(4px) saturate(200%) contrast(1.08) brightness(1.04);
+          backdrop-filter: blur(4px) saturate(200%) contrast(1.08) brightness(1.04);
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow:
+    /* 顶部高光（玻璃凸起反射，保留玻璃感） */
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    /* 底部辉光（玻璃底部内反射） */
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    /* 外投影：Figma shadow_md 规格（0 8 40 0 / 10% black） */
+    0 8px 40px 0 rgba(0, 0, 0, 0.10);
+}
+/* Liquid Glass 边缘折射 ring（mask 已挪到 .sb-row-inner，sb-row 也能加 ring） */
+.sb-row.glass-pill::before,
+.time-tabs.glass-pill::before,
+.balance-pill.glass-pill::before,
+.sport-card.glass-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  filter: url(#liquid-glass);
+  pointer-events: none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
 }
 
 /* === 通用横滑 + 右边缘渐隐（参考 edge-fade-mask.md 第 6 节） ===
@@ -170,17 +208,36 @@ body {
 }
 .fade-edge-x::-webkit-scrollbar { display: none; }
 
-/* --- Row 1: sportsbook switcher --- */
+/* --- Row 1: sportsbook switcher ---
+   外层 .sb-row：胶囊背景 + 玻璃质感 + ring（mask 不在这层）
+   内层 .sb-row-inner：横滑 + 右边缘 mask 渐隐 */
 .sb-row {
-  --fade: 24px;
   width: 374px; height: 32px;
   border-radius: 296px;
   padding: 4px;
-  display: flex; align-items: center; gap: 8px;
-  overflow-y: visible;
+  display: flex; align-items: stretch;
+  overflow: visible;
 }
-/* ribbon 浮出顶部 11px，用 transform 偏移不参与 overflow 计算 */
-.sb-item.active .ribbon { z-index: 3; }
+.sb-row-inner {
+  --fade: 24px;
+  flex: 1;
+  display: flex; align-items: center; gap: 8px;
+  border-radius: 296px;
+}
+/* === ribbon-floating: 从 sb-row 提到 filter-region 顶层独立浮动 ===
+   位置算：filter-region padding 8 + sb-row padding 4 + sb-item.active 内 left:15 = x 27
+           y 浮出 sb-row 顶部 11px → filter-region 内 y = 8 + 4 - 11 = 1 */
+.ribbon-floating {
+  position: absolute;
+  left: 27px; top: 1px;
+  width: 83px; height: 14px;
+  z-index: 11;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+  transition: opacity 0.15s ease;
+}
 .sb-item {
   height: 24px;
   display: inline-flex; align-items: center;
@@ -196,14 +253,6 @@ body {
 .sb-item.active .label { color: var(--text-primary); font-weight: 600; }
 .sb-item img.logo { display: block; height: 24px; width: auto; }
 .sb-item .label { font-weight: 500; }
-.sb-item.active .ribbon {
-  position: absolute;
-  left: 15px; top: 0;
-  transform: translateY(-11px);
-  width: 83px; height: 14px;
-  pointer-events: none;
-  /* transform 偏移不参与父级 overflow 计算，避免被 sb-row 横滑容器裁掉 */
-}
 
 /* --- Row 2: time tabs + balance --- */
 .time-bal-row {
@@ -288,11 +337,11 @@ body {
   background-repeat: no-repeat;
   flex-shrink: 0;
 }
-.mt-icon[data-id="anchor"]     { background-image: url("assets/mt-anchor.png");     background-size: 64px 28px; background-position: 0 -4px; }
-.mt-icon[data-id="favorite"]   { background-image: url("assets/mt-favorite.png");   background-size: 72px 28px; background-position: -4px -4px; }
-.mt-icon[data-id="football"]   { background-image: url("assets/mt-football.png");   background-size: 82px 28px; background-position: -4px -4px; }
-.mt-icon[data-id="basketball"] { background-image: url("assets/mt-basketball.png"); background-size: 73px 28px; background-position: -4px -4px; }
-.mt-icon[data-id="esports"]    { background-image: url("assets/mt-esports.png");    background-size: 73px 28px; background-position: -4px -4px; }
+.mt-icon[data-id="anchor"]     { background-image: url("../assets/mt-anchor.png");     background-size: 64px 28px; background-position: 0 -4px; }
+.mt-icon[data-id="favorite"]   { background-image: url("../assets/mt-favorite.png");   background-size: 72px 28px; background-position: -4px -4px; }
+.mt-icon[data-id="football"]   { background-image: url("../assets/mt-football.png");   background-size: 82px 28px; background-position: -4px -4px; }
+.mt-icon[data-id="basketball"] { background-image: url("../assets/mt-basketball.png"); background-size: 73px 28px; background-position: -4px -4px; }
+.mt-icon[data-id="esports"]    { background-image: url("../assets/mt-esports.png");    background-size: 73px 28px; background-position: -4px -4px; }
 
 /* league chip: structured (icon + name) */
 .lt {
@@ -319,11 +368,11 @@ body {
   background-repeat: no-repeat;
   flex-shrink: 0;
 }
-.lt-icon[data-id="ucl"]    { background-image: url("assets/league-ucl.png");    background-size: 54px 24px; background-position: -4px -2px; }
-.lt-icon[data-id="pl"]     { background-image: url("assets/league-pl.png");     background-size: 54px 24px; background-position: -4px -2px; }
-.lt-icon[data-id="seriea"] { background-image: url("assets/league-seriea.png"); background-size: 58px 24px; background-position: -4px -2px; }
-.lt-icon[data-id="laliga"] { background-image: url("assets/league-laliga.png"); background-size: 54px 24px; background-position: -4px -2px; }
-.lt-icon[data-id="ligue1"] { background-image: url("assets/league-ligue1.png"); background-size: 54px 24px; background-position: -4px -2px; }
+.lt-icon[data-id="ucl"]    { background-image: url("../assets/league-ucl.png");    background-size: 54px 24px; background-position: -4px -2px; }
+.lt-icon[data-id="pl"]     { background-image: url("../assets/league-pl.png");     background-size: 54px 24px; background-position: -4px -2px; }
+.lt-icon[data-id="seriea"] { background-image: url("../assets/league-seriea.png"); background-size: 58px 24px; background-position: -4px -2px; }
+.lt-icon[data-id="laliga"] { background-image: url("../assets/league-laliga.png"); background-size: 54px 24px; background-position: -4px -2px; }
+.lt-icon[data-id="ligue1"] { background-image: url("../assets/league-ligue1.png"); background-size: 54px 24px; background-position: -4px -2px; }
 
 .sport-card .divider {
   height: 1px;
@@ -495,14 +544,14 @@ body {
     transform 0.52s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
 }
-/* 点击态：边缘折射 ring（iOS 26 极强折射版，padding 4px） */
+/* 点击态：边缘折射 ring（iOS 26 风格，padding 1.5px 细描边） */
 .bottom-float .sp::after {
   content: '';
   position: absolute;
   top: 50%; left: 50%;
   width: 95px; height: 62px;
   border-radius: 999px;
-  padding: 4px;
+  padding: 1.5px;
   background:
     linear-gradient(
       180deg,
@@ -578,7 +627,7 @@ body {
 /* tab-icon: 24×24 sprite cropped from common-tabbar.png (390×84) */
 .tab-icon {
   width: 24px; height: 24px;
-  background-image: url("assets/common-tabbar.png");
+  background-image: url("../assets/common-tabbar.png");
   background-size: 390px 84px;
   background-repeat: no-repeat;
 }
