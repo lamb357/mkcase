@@ -139,15 +139,59 @@ body {
 }
 
 /* ===== Scrollable content (top-stack + filter-region 之下) ===== */
+/* === Sticky 浮层：sub-status + bet-title 钉住，不跟随 scroll 滚动 ===
+   独立 absolute 定位在 scroll 容器外，z-index 低于 filter-region(10) 高于 scroll(auto) */
+.sticky-headers {
+  position: absolute;
+  top: calc(var(--top-stack-h) + var(--filter-h));  /* 紧贴 filter-region 底边 */
+  left: 0; right: 0;
+  z-index: 9;
+  pointer-events: none;
+  display: flex; flex-direction: column;
+  /* 跟随 filter-region 同步动画（top-stack-h 变化时 banner 收起/展开） */
+  transition: top 0.22s ease;
+}
+.sticky-headers .sh-sub {
+  display: block;
+  width: 390px; height: 28px;
+}
+.sticky-headers .sh-title {
+  display: block;
+  width: 374px; height: 46px;
+  margin: 0 8px;
+}
+
+/* sticky 头部总高 = sub-status(28) + bet-title(46) = 74 */
+:root { --sticky-h: 74px; }
+
 .scroll {
   position: absolute;
-  top: calc(var(--top-stack-h) + var(--filter-h)); left: 0; right: 0; bottom: 84px;
+  /* 上提到 top-stack 底部，让滚动内容可以"穿过" filter-region 区域显示 */
+  top: var(--top-stack-h); left: 0; right: 0; bottom: 84px;
+  /* 顶部 padding = filter-region + sticky 浮层高度，内容初始位置在 sticky 之下 */
+  padding-top: calc(var(--filter-h) + var(--sticky-h));
+  box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;           /* 禁止横向滚动 */
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   touch-action: pan-y;          /* 触摸手势仅允许纵向 */
   transition: top 0.22s ease;
+  /* 顶部 173px (= filter-region 高度) 渐隐：内容滑到 filter-region 顶部时完全消失 */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--filter-h),
+    #000 100%
+  );
+          mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--filter-h),
+    #000 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
 }
 .scroll::-webkit-scrollbar { display: none; }
 /* scroll 内的 img / 子元素如果宽度溢出，强制裁切到容器宽度 */
@@ -162,12 +206,15 @@ body {
   top: var(--top-stack-h); left: 0; right: 0;
   width: 390px; height: var(--filter-h);
   z-index: 10;
-  background: var(--layer-secondary-50);
+  /* background 取消，露出 phone canvas 的灰底，三个 glass-pill 直接浮在背景上 */
+  background: transparent;
   padding: 8px;
   display: flex; flex-direction: column;
   gap: 6px;
   transition: top 0.22s ease;
+  pointer-events: none;          /* 容器透传点击，避免拦截 */
 }
+.filter-region > * { pointer-events: auto; }  /* 子元素仍可点击 */
 /* === Liquid Glass 容器（参照 .bottom-float 写法） ===
    适用于 .sb-row / .time-tabs / .balance-pill / .sport-card
    border-radius 由各自规则决定，box-shadow / backdrop-filter 在此统一 */
@@ -683,6 +730,17 @@ body {
   display: block;
   width: 390px;
   height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 新的赛事内容图：自带 title 在顶部 46h，用 negative margin 抵消，
+   让 title 区滚到 sticky 浮层下面被覆盖（避免 title 显示两次） */
+.bet-content {
+  display: block;
+  width: 390px;
+  height: auto;
+  margin-top: -46px;
   user-select: none;
   pointer-events: none;
 }
