@@ -403,12 +403,12 @@ body {
   overflow-y: hidden;
 }
 
-/* menu_type chip: structured (icon + label + count) */
+/* menu_type chip: structured (icon + label + count) — Figma 1525:111814 球类筛选 24h */
 .mt {
-  height: 28px;
+  height: 24px;
   border-radius: 20px;
   display: inline-flex; align-items: center;
-  padding: 4px;
+  padding: 2px;
   gap: 2px;
   font-size: 12px;
   color: var(--text-weak);
@@ -418,7 +418,7 @@ body {
 .mt.active {
   background: var(--layer-secondary-50);
   border-radius: 100px;
-  padding: 4px 8px 4px 4px;
+  padding: 2px 8px 2px 2px;
   color: var(--text-primary);
 }
 .mt .name { font-weight: 500; }
@@ -426,17 +426,17 @@ body {
 .mt .cnt { font-family: var(--font-num); font-weight: 600; }
 .mt.active .cnt { font-weight: 700; }
 
-/* mt-icon: 20×20 cropped from chip PNG via background-position */
+/* mt-icon: 20×20 cropped from chip PNG via background-position (PNG @1x = 28h chip，按 24/28 缩放) */
 .mt-icon {
   width: 20px; height: 20px;
   background-repeat: no-repeat;
   flex-shrink: 0;
 }
-.mt-icon[data-id="anchor"]     { background-image: url("../assets/mt-anchor.png");     background-size: 64px 28px; background-position: 0 -4px; }
-.mt-icon[data-id="favorite"]   { background-image: url("../assets/mt-favorite.png");   background-size: 72px 28px; background-position: -4px -4px; }
-.mt-icon[data-id="football"]   { background-image: url("../assets/mt-football.png");   background-size: 82px 28px; background-position: -4px -4px; }
-.mt-icon[data-id="basketball"] { background-image: url("../assets/mt-basketball.png"); background-size: 73px 28px; background-position: -4px -4px; }
-.mt-icon[data-id="esports"]    { background-image: url("../assets/mt-esports.png");    background-size: 73px 28px; background-position: -4px -4px; }
+.mt-icon[data-id="anchor"]     { background-image: url("../assets/mt-anchor.png");     background-size: 55px 24px;   background-position: 0 -2px; }
+.mt-icon[data-id="favorite"]   { background-image: url("../assets/mt-favorite.png");   background-size: 62px 24px;   background-position: -3px -2px; }
+.mt-icon[data-id="football"]   { background-image: url("../assets/mt-football.png");   background-size: 70px 24px;   background-position: -3px -2px; }
+.mt-icon[data-id="basketball"] { background-image: url("../assets/mt-basketball.png"); background-size: 63px 24px;   background-position: -3px -2px; }
+.mt-icon[data-id="esports"]    { background-image: url("../assets/mt-esports.png");    background-size: 63px 24px;   background-position: -3px -2px; }
 
 /* league chip: structured (icon + name) */
 .lt {
