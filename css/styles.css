@@ -537,10 +537,18 @@ body {
    Bottom floating sport tabbar — 296×50, icon-only 切图 + HTML 文字
    5 项：教程 / 设置 / 未结算 / 已结算 / 刷新
    =========================================================== */
+@property --float-y {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
 .bottom-float {
   position: fixed;
   bottom: 62px; left: 50%;
-  transform: translateX(-50%);
+  /* 默认水平居中；隐藏态由 --float-y 控制纵向位移；3d 启用 GPU 合成 */
+  --float-y: 0px;
+  transform: translate3d(-50%, var(--float-y), 0);
+  will-change: transform, opacity;
   width: 296px; height: 50px;
   z-index: 10;
   border-radius: 999px;
@@ -561,10 +569,10 @@ body {
     0 14px 28px rgba(0, 0, 0, 0.16);
   padding: 8px 12px;
   display: flex; align-items: center; gap: 8px;
-  /* 出现 / 消失 参数一致：transform + opacity 同 duration 同曲线 */
+  /* 通过 @property 注册的 --float-y 可被 transition 平滑插值，触发 GPU 合成层避免卡顿 */
   transition:
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    --float-y 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 /* Liquid Glass 边缘折射 ring（iOS 26 风格，加粗到 3px 让扭曲更明显） */
 .bottom-float::before {
@@ -599,7 +607,7 @@ body {
 
 /* 向下滑动隐藏 bottom-float（独立 class，跟随滚动方向而非位置） */
 .phone.float-hidden .bottom-float {
-  transform: translateY(146px);
+  --float-y: 146px;             /* 仅改 CSS 变量，复用 base transform，避免覆盖 translateX(-50%) */
   opacity: 0;
   pointer-events: none;
 }
