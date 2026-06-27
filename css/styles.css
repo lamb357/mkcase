@@ -48,6 +48,11 @@
   --font-num: 'Akrobat', 'SF Pro Display', system-ui, sans-serif;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+/* === 全局隐藏滚动条（桌面 + 移动） === */
+html, body { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; width: 0; height: 0; }
+::-webkit-scrollbar { display: none; width: 0; height: 0; }
 html, body {
   margin: 0; padding: 0;
   /* 不设 height / overflow：让 window 成为滚动容器，移动浏览器自动隐藏底栏 */
@@ -96,15 +101,22 @@ body {
   .phone {
     width: 390px;
     height: 844px;
-    min-height: 0;                                    /* 关键：覆盖 base 的 min-height: 100vh */
+    min-height: 0;
     max-height: 844px;
     margin: 0;
-    overflow-y: auto;                                 /* 内容超出 844 时 .phone 内部滚动 */
+    overflow-y: auto;
     overflow-x: hidden;
     transform: none;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    /* 隐藏滚动条 */
+    scrollbar-width: none;                            /* Firefox */
+    -ms-overflow-style: none;                         /* 旧 Edge / IE */
   }
-  .phone::-webkit-scrollbar { display: none; }
+  .phone::-webkit-scrollbar {                         /* Chrome / Safari / 新 Edge */
+    display: none;
+    width: 0;
+    height: 0;
+  }
 
 }
 
