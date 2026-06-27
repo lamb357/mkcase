@@ -130,6 +130,11 @@ body.is-desktop .tabbar {
   width: 390px !important;
   margin: 0 !important;
 }
+/* 移动端 .float-hidden 时不要 opacity 渐隐，仅靠 transform 位移移出视口底 */
+body:not(.is-desktop) .phone.float-hidden .bottom-float {
+  opacity: 1 !important;
+}
+
 /* 桌面端 phone 之下用 body 灰底遮挡：bottom-float 滑出动画超出 phone 部分被遮罩 */
 body.is-desktop::after {
   content: '';
