@@ -16,10 +16,28 @@
   fitPhone();
   window.addEventListener('resize', fitPhone);
   window.addEventListener('orientationchange', fitPhone);
+  // 触发 mobile 浏览器隐藏地址栏：window 微滚 1px
+  function hideBrowserChrome() {
+    if (window.scrollY < 1) window.scrollTo(0, 1);
+  }
+  window.addEventListener('load', hideBrowserChrome);
+  scrollEl.addEventListener('touchstart', hideBrowserChrome, { passive: true });
+  scrollEl.addEventListener('scroll', hideBrowserChrome, { passive: true, once: false });
+  // 进入页面/方向变化时也尝试隐藏
+  setTimeout(hideBrowserChrome, 100);
+  window.addEventListener('orientationchange', function () { setTimeout(hideBrowserChrome, 100); });
+
   let lastTop = scrollEl.scrollTop;
+  let scrollStopTimer = null;
   scrollEl.addEventListener('scroll', function () {
     const t = scrollEl.scrollTop;
     const delta = t - lastTop;
+
+    // 滑动停止 150ms 后显示 bottom-float
+    clearTimeout(scrollStopTimer);
+    scrollStopTimer = setTimeout(function () {
+      phone.classList.remove('float-hidden');
+    }, 150);
 
     // sticky-bg 在滚动离开顶部后保持显示，回到顶部消失
     if (t > 0) {
