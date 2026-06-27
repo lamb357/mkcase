@@ -36,17 +36,11 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
   margin: 0; padding: 0;
-  width: 100%;
-  overscroll-behavior: none;
-  touch-action: pan-y;          /* 全局禁横滑（含双指捏合缩放） */
-}
-html {
-  /* body 略高于 viewport，让 document 自身可滚动 → mobile 浏览器自动隐藏地址栏 */
-  height: 100%;
+  /* 不设 height / overflow：让 window 是滚动容器，移动浏览器才能自动收起底栏 */
 }
 body {
-  min-height: calc(100vh + 60px);
-  /* body 自身可滚但视觉被 .phone position:fixed 覆盖 */
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 body {
   font-family: var(--font-text);
@@ -60,12 +54,11 @@ body {
    → 整页完整 fit 浏览器视口，宽高均不溢出 */
 .phone {
   width: 390px;
-  height: calc(100vh / var(--phone-scale, 1));   /* 旧版 Safari fallback */
-  height: calc(100dvh / var(--phone-scale, 1));  /* iOS 15+ 动态视口高度 */
+  /* min-height 而非 height：保持 window 可滚动，触发 mobile 浏览器底栏自动隐藏 */
+  min-height: calc(100vh / var(--phone-scale, 1));
+  min-height: calc(100dvh / var(--phone-scale, 1));
   background: #f0f0f0;
-  /* fixed 钉在视口左上，body 的"假"滚动不影响视觉 */
-  position: fixed;
-  top: 0; left: 0;
+  position: relative;
   overflow: hidden;
   touch-action: pan-y;
   transform: scale(var(--phone-scale, 1));
