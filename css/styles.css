@@ -609,7 +609,12 @@ body.is-desktop::after {
 }
 
 /* Betting sections — 透明 PNG 拼装（Figma 1458:100554） */
-.bet-section { padding: 8px 8px 0; }
+.bet-section {
+  padding: 8px 8px 0;
+  /* 性能：让浏览器对未进入视口的 section 跳过 paint，contain-intrinsic-size 占位避免 layout 跳变 */
+  content-visibility: auto;
+  contain-intrinsic-size: 374px 360px;
+}
 .bet-section img {
   display: block;
   width: 374px;

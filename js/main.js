@@ -53,46 +53,59 @@
   let pendingRaf = 0;
   let stopTimer = 0;
 
+  // 性能：缓存 class 状态本地变量，避免每帧 classList.contains 多次查询
+  let cScrolledDown = false, cScrolled = false, cFloatHidden = false, cShowSubstatus = false;
+  const cls = phone.classList;
+
   const onFrame = function () {
     pendingRaf = 0;
     const t = getY();
     const delta = t - lastTop;
 
     // 1. sticky-bg：离开顶部就显示
-    if (t > 0) phone.classList.add('scrolled-down');
-    else phone.classList.remove('scrolled-down');
+    const wantScrolledDown = t > 0;
+    if (wantScrolledDown !== cScrolledDown) {
+      cls.toggle('scrolled-down', wantScrolledDown);
+      cScrolledDown = wantScrolledDown;
+    }
 
     // 2. banner 折叠（迟滞防抖 4 / 8 阈值）
-    if (t > 8) {
-      if (!phone.classList.contains('scrolled')) phone.classList.add('scrolled');
-    } else if (t <= 4) {
-      if (phone.classList.contains('scrolled')) phone.classList.remove('scrolled');
+    if (t > 8 && !cScrolled) {
+      cls.add('scrolled'); cScrolled = true;
+    } else if (t <= 4 && cScrolled) {
+      cls.remove('scrolled'); cScrolled = false;
     }
 
     // 3. bottom-float 方向：向下滚隐藏、向上滚显示（≥2px 噪声门）
     if (Math.abs(delta) > 2) {
-      if (delta > 0) phone.classList.add('float-hidden');
-      else phone.classList.remove('float-hidden');
+      const wantFloat = delta > 0;
+      if (wantFloat !== cFloatHidden) {
+        cls.toggle('float-hidden', wantFloat);
+        cFloatHidden = wantFloat;
+      }
     }
-    if (t <= 0) phone.classList.remove('float-hidden');
+    if (t <= 0 && cFloatHidden) {
+      cls.remove('float-hidden'); cFloatHidden = false;
+    }
 
     // 4. show-substatus：第二个 bet-substatus-img 上推到 sticky 位置时切换
     if (subEl) {
       const subTop = subEl.getBoundingClientRect().top;
-      if (subTop <= topStackH + filterH) phone.classList.add('show-substatus');
-      else phone.classList.remove('show-substatus');
+      const wantShow = subTop <= topStackH + filterH;
+      if (wantShow !== cShowSubstatus) {
+        cls.toggle('show-substatus', wantShow);
+        cShowSubstatus = wantShow;
+      }
     }
 
     lastTop = t;
   };
 
   const onScroll = function () {
-    // rAF 节流，每帧最多执行一次
     if (!pendingRaf) pendingRaf = requestAnimationFrame(onFrame);
-    // 滑动停止 180ms 后让 bottom-float 重新出现
     clearTimeout(stopTimer);
     stopTimer = setTimeout(function () {
-      phone.classList.remove('float-hidden');
+      if (cFloatHidden) { cls.remove('float-hidden'); cFloatHidden = false; }
     }, 180);
   };
   // 同时监听 window 和 .phone scroll：桌面端 .phone 滚，移动端 window 滚

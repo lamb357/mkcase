@@ -8,6 +8,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#151515">
 <title>MK_APP 首页 · 体育</title>
+<!-- 性能：preload 关键资源（首屏图片 + 字体） -->
+<link rel="preload" href="assets/topnav.png" as="image">
+<link rel="preload" href="assets/venuetabs.png" as="image">
+<link rel="preload" href="assets/fonts/Akrobat-Bold.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="assets/fonts/Akrobat-SemiBold.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -160,39 +165,39 @@
       <div class="bet-group">
         <img class="bet-substatus-img" src="assets/sticky-headers.png" alt="进行中">
         <section class="bet-section">
-          <img class="bet-title-img" src="assets/title-1.png" alt="联赛标题 1">
-          <img class="bet-card-img" src="assets/card-1.png" alt="赛事 1-1">
-          <img class="bet-card-img" src="assets/card-2.png" alt="赛事 1-2">
+          <img loading="lazy" decoding="async" class="bet-title-img" src="assets/title-1.png" alt="联赛标题 1">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-1.png" alt="赛事 1-1">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-2.png" alt="赛事 1-2">
         </section>
         <section class="bet-section">
-          <img class="bet-title-img" src="assets/title-2.png" alt="联赛标题 2">
-          <img class="bet-card-img" src="assets/card-3.png" alt="赛事 2-1">
-          <img class="bet-card-img" src="assets/card-4.png" alt="赛事 2-2">
+          <img loading="lazy" decoding="async" class="bet-title-img" src="assets/title-2.png" alt="联赛标题 2">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-3.png" alt="赛事 2-1">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-4.png" alt="赛事 2-2">
         </section>
         <section class="bet-section">
-          <img class="bet-title-img" src="assets/title-3.png" alt="联赛标题 3">
-          <img class="bet-card-img" src="assets/card-5.png" alt="赛事 3-1">
-          <img class="bet-card-img" src="assets/card-6.png" alt="赛事 3-2">
+          <img loading="lazy" decoding="async" class="bet-title-img" src="assets/title-3.png" alt="联赛标题 3">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-5.png" alt="赛事 3-1">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-6.png" alt="赛事 3-2">
         </section>
       </div>
 
       <!-- ===== 未开赛 组 ===== -->
       <div class="bet-group">
-        <img class="bet-substatus-img" src="assets/sticky-headers-02.png" alt="未开赛">
+        <img loading="lazy" decoding="async" class="bet-substatus-img" src="assets/sticky-headers-02.png" alt="未开赛">
         <section class="bet-section">
-          <img class="bet-title-img" src="assets/title-4.png" alt="联赛标题 4">
-          <img class="bet-card-img" src="assets/card-7.png" alt="赛事 4-1">
-          <img class="bet-card-img" src="assets/card-8.png" alt="赛事 4-2">
+          <img loading="lazy" decoding="async" class="bet-title-img" src="assets/title-4.png" alt="联赛标题 4">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-7.png" alt="赛事 4-1">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-8.png" alt="赛事 4-2">
         </section>
         <section class="bet-section">
-          <img class="bet-title-img" src="assets/title-5.png" alt="联赛标题 5">
-          <img class="bet-card-img" src="assets/card-9.png" alt="赛事 5-1">
-          <img class="bet-card-img" src="assets/card-10.png" alt="赛事 5-2">
+          <img loading="lazy" decoding="async" class="bet-title-img" src="assets/title-5.png" alt="联赛标题 5">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-9.png" alt="赛事 5-1">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-10.png" alt="赛事 5-2">
         </section>
         <section class="bet-section">
-          <img class="bet-title-img" src="assets/title-6.png" alt="联赛标题 6">
-          <img class="bet-card-img" src="assets/card-11.png" alt="赛事 6-1">
-          <img class="bet-card-img" src="assets/card-12.png" alt="赛事 6-2">
+          <img loading="lazy" decoding="async" class="bet-title-img" src="assets/title-6.png" alt="联赛标题 6">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-11.png" alt="赛事 6-1">
+          <img loading="lazy" decoding="async" class="bet-card-img" src="assets/card-12.png" alt="赛事 6-2">
         </section>
       </div>
     </div>
