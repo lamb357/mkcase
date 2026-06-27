@@ -16,7 +16,21 @@
   font-display: swap;
 }
 
+/* 注册为 <length>，让 var(--top-stack-h) 能被 transition 平滑插值
+   依赖此变量的 sticky offset（filter-region / bet-substatus-img / bet-title-img …）
+   随 banner 收起一起平滑动画，避免阶跃跳变 */
+@property --top-stack-h {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 166px;
+}
+
 :root {
+  /* === 全局动画 timing：所有 banner 收起/展开关联动画统一这一组 === */
+  --anim-d:      0.36s;                                /* 主时长：位移/高度 */
+  --anim-d-fast: 0.28s;                                /* 短时长：opacity / blur 等淡变 */
+  --anim-e:      cubic-bezier(0.32, 0.72, 0, 1);       /* iOS 标准 easeOutExpo */
+
   /* Top stack 折叠状态：banner 展开=166 (44 topnav + 64 banner + 8 gap + 50 venuetabs), 收起=94 */
   --top-stack-h: 166px;
   --filter-h: 153px;
@@ -61,15 +75,70 @@ body {
   min-height: 100dvh;
   background: #f0f0f0;
   position: relative;
+  /* 平滑插值 --top-stack-h，让所有依赖的 sticky offset（filter-region/bet-substatus-img/…）
+     与 banner 收起同步动画，不再阶跃跳变 */
+  transition: --top-stack-h var(--anim-d) var(--anim-e);
 }
-/* 桌面浏览器（精确指针）：固定 390×844 + 投影，不缩放 */
+/* 桌面浏览器（精确指针）：固定 390×844 + 投影，不缩放，内部独立滚动 */
 @media (hover: hover) and (pointer: fine) {
-  body { background: #2a2a2a; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+  /* 锁住 body 高度，禁止 window 整页滚动；.phone 内部自带滚动 */
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+  }
+  body {
+    background: #2a2a2a;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;                                /* 顶部留点空隙不顶到浏览器边 */
+  }
   .phone {
-    width: 390px; height: 844px;
+    width: 390px;
+    height: 844px;
+    min-height: 0;                                    /* 关键：覆盖 base 的 min-height: 100vh */
+    max-height: 844px;
+    margin: 0;
+    overflow-y: auto;                                 /* 内容超出 844 时 .phone 内部滚动 */
+    overflow-x: hidden;
     transform: none;
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
   }
+  .phone::-webkit-scrollbar { display: none; }
+
+}
+
+/* === 桌面端：tabbar / bottom-float 用 sticky bottom 跟随 .phone scroll container 底 ===
+   base CSS 的 transform: translate3d(-50%, ...) 在 sticky 下会让元素向左偏 -50%，需覆盖 */
+/* 桌面端：fixed 锚到 viewport，bottom 用 calc 偏移到 .phone 底部位置
+   .phone 在 viewport y = 40 ~ 884，viewport h 任意时
+   tabbar bottom = 100vh - 884 → 距视口底 (100vh - 884)，tabbar 视觉底 = 884 = .phone 底
+   bottom-float bottom = 100vh - 884 + 62 → 浮在 tabbar 上 62px */
+body.is-desktop .bottom-float {
+  position: fixed !important;
+  top: auto !important;
+  bottom: calc(100vh - 884px + 62px) !important;
+  left: 50% !important;
+  transform: translate3d(-50%, var(--float-y, 0px), 0) !important;
+}
+body.is-desktop .tabbar {
+  position: fixed !important;
+  top: auto !important;
+  bottom: calc(100vh - 884px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 390px !important;
+  margin: 0 !important;
+}
+/* 桌面端 phone 之下用 body 灰底遮挡：bottom-float 滑出动画超出 phone 部分被遮罩 */
+body.is-desktop::after {
+  content: '';
+  position: fixed;
+  top: 884px;             /* phone 底（40 + 844）*/
+  left: 0; right: 0; bottom: 0;
+  background: #2a2a2a;    /* 与 body 背景一致 */
+  z-index: 12;            /* 高于 bottom-float(10) 和 tabbar(11) */
+  pointer-events: none;
 }
 
 /* ===== Sticky top stack (Figma 1417:94613) ===== */
@@ -80,7 +149,7 @@ body {
   z-index: 10;
   background: #151515;
   display: flex; flex-direction: column;
-  transition: height 0.22s ease;
+  transition: height var(--anim-d) var(--anim-e);
 }
 
 /* --- Status Bar + TopNavigation 44h (topnav.png @3x = 1170×132 → 390×44) --- */
@@ -98,7 +167,11 @@ body {
   padding: 0 14px;
   flex-shrink: 0;
   overflow: hidden;
-  transition: height 0.22s ease, opacity 0.18s ease;
+  will-change: height, opacity;
+  contain: layout style;
+  transition:
+    height  var(--anim-d)      var(--anim-e),
+    opacity var(--anim-d-fast) var(--anim-e);
 }
 .ts-banner img {
   display: block;
@@ -120,7 +193,7 @@ body {
   gap: 4px;
   overflow-x: auto; overflow-y: hidden;
   scrollbar-width: none;
-  transition: margin-top 0.22s ease;
+  transition: margin-top var(--anim-d) var(--anim-e);
 }
 
 /* --- Scrolled state: banner 折叠收起 --- */
@@ -149,15 +222,14 @@ body {
   pointer-events: none;
   display: flex; flex-direction: column;
   background: #f0f0f0;                              /* 实色底，挡住 scroll 内容透出 */
-  /* 跟随 filter-region 同步动画（top-stack-h 变化时 banner 收起/展开） */
-  transition: top 0.22s ease;
+  /* top 由 var(--top-stack-h) 0.36s 变量过渡自驱，元素自己无需再 transition */
 }
 .sticky-headers .sh-img {
   display: block;
   width: 390px; height: 28px;
   position: absolute;
   top: 0; left: 0;
-  transition: opacity 0.18s ease;
+  transition: opacity var(--anim-d-fast) var(--anim-e);
 }
 /* sticky-headers 下方独立的 #F0F0F0 实色块，挡住 bet-card-img 滚动到此区域时透出 */
 .sticky-gap {
@@ -170,7 +242,7 @@ body {
   z-index: 1;
   background: #f0f0f0;
   pointer-events: none;
-  transition: top 0.22s ease;
+  /* top 由 var(--top-stack-h) 自驱过渡 */
 }
 .sticky-headers { height: 28px; }
 .sticky-headers .sh-img-02 { opacity: 0; }
@@ -197,13 +269,9 @@ body {
    覆盖 filter-region + sticky-headers，提供顶部半透明灰渐变 + 1.5px backdrop blur
    =========================================================== */
 .sticky-bg {
-  position: fixed;
-  top: var(--top-stack-h);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 390px;
-  height: var(--filter-h);
-  z-index: 8;                                   /* 在 filter-region(10) / sticky-headers(9) 之下 */
+  position: absolute;
+  inset: 0;                                       /* 跟随 filter-region 完全锁死，无独立位移动画 */
+  z-index: -1;                                    /* 在 filter-region 内子元素（sb-row 等）之下 */
   pointer-events: none;
   /* 默认状态：实色 #F0F0F0，无 backdrop blur */
   background-color: #f0f0f0;
@@ -211,9 +279,12 @@ body {
   -webkit-backdrop-filter: none;
           backdrop-filter: none;
   opacity: 0;
-  transition: top 0.22s ease, height 0.22s ease, opacity 0.18s ease,
-              background-color 0.22s ease, background-image 0.22s ease,
-              backdrop-filter 0.22s ease;
+  /* top/height 由 var 自驱，仅过渡 opacity 和外观属性 */
+  transition:
+    opacity          var(--anim-d-fast) var(--anim-e),
+    background-color var(--anim-d)      var(--anim-e),
+    background-image var(--anim-d)      var(--anim-e),
+    backdrop-filter  var(--anim-d)      var(--anim-e);
 }
 .phone.scrolled-down .sticky-bg { opacity: 1; }
 /* 切换到"未开赛"sticky-headers-02 时：恢复半透明灰渐变 + 1.5px backdrop blur */
@@ -242,7 +313,7 @@ body {
   padding: 8px;
   display: flex; flex-direction: column;
   gap: 4px;
-  transition: top 0.22s ease;
+  /* top 由 var(--top-stack-h) 自驱过渡 */
   pointer-events: none;          /* 容器透传点击，避免拦截 */
 }
 .filter-region > * { pointer-events: auto; }  /* 子元素仍可点击 */
@@ -810,9 +881,9 @@ body {
   height: 46px;
   user-select: none;
   pointer-events: none;
-  /* 悬浮替换：钉在 top-stack + filter-region + bet-substatus 之下 */
+  /* 悬浮替换：钉在 top-stack + filter-region + bet-substatus 之下 + 8px 间距 */
   position: sticky;
-  top: calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h));
+  top: calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h) + 8px);
   z-index: 2;
 }
 .bet-content .bet-group {
@@ -831,6 +902,8 @@ body {
   position: sticky;
   top: calc(var(--top-stack-h) + var(--filter-h));
   z-index: 9;
+  /* 下方 8px 灰底空白：滑动时 bet-section 始终距 sticky-headers 8px 间距 */
+  box-shadow: 0 8px 0 #f0f0f0;
 }
 .bet-section .bet-card-img {
   display: block;

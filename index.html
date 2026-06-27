@@ -40,14 +40,14 @@
 
   </div>
 
-  <!-- ===== Sticky 区背景层（Figma 1526:125967） — 顶部半透明灰 → 透明渐变 + 1.5px backdrop blur ===== -->
-  <div class="sticky-bg"></div>
-
   <!-- ===== sticky-headers 下方实色块 #F0F0F0，挡住 bet-card-img 透出 ===== -->
   <div class="sticky-gap"></div>
 
   <!-- ============ Filter region: sticky 钉在 top-stack 下方 ============ -->
   <div class="filter-region">
+    <!-- sticky 区背景层（Figma 1526:125967）作为 filter-region 内部子元素，跟随其 sticky 移动 -->
+    <div class="sticky-bg"></div>
+
 
       <!-- ribbon 提到 sb-row 外，独立绝对定位，避免被 sb-row mask/overflow 裁切 -->
       <img class="ribbon-floating" src="assets/promo-ribbon.png" alt="高达 1.18% 无限返水">
