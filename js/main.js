@@ -45,6 +45,21 @@
     }
     if (t <= 0) phone.classList.remove('float-hidden'); // 顶部强制显示
 
+    // sticky-headers 内容切换：滚动至第二个 bet-substatus-img（未开赛）位置时切换
+    const allSubs = document.querySelectorAll('.bet-substatus-img');
+    const subEl = allSubs[1] || null;     // 第二个（未开赛 header）
+    if (subEl) {
+      const subRect = subEl.getBoundingClientRect();
+      const scrollRect = scrollEl.getBoundingClientRect();
+      const relativeY = subRect.top - scrollRect.top;
+      const filterH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--filter-h'));
+      if (relativeY <= filterH) {
+        phone.classList.add('show-substatus');
+      } else {
+        phone.classList.remove('show-substatus');
+      }
+    }
+
     lastTop = t;
   }, { passive: true });
 

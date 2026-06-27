@@ -17,8 +17,8 @@
 }
 
 :root {
-  /* Top stack 折叠状态：banner 展开=213, 收起=141 */
-  --top-stack-h: 213px;
+  /* Top stack 折叠状态：banner 展开=166 (44 topnav + 64 banner + 8 gap + 50 venuetabs), 收起=94 */
+  --top-stack-h: 166px;
   --filter-h: 153px;
   --text: #232323;
   --text-weak: #5c5c5c;
@@ -83,12 +83,12 @@ body {
   transition: height 0.22s ease;
 }
 
-/* --- Status Bar + TopNavigation 91h (Figma 333:3180-3182 整图) --- */
+/* --- Status Bar + TopNavigation 44h (topnav.png @3x = 1170×132 → 390×44) --- */
 .ts-topnav {
   width: 390px;
-  height: 91px;
+  height: 44px;
   background: url('../assets/topnav.png') no-repeat 0 0;
-  background-size: 390px 99px;
+  background-size: 390px 44px;
   flex-shrink: 0;
 }
 
@@ -124,7 +124,7 @@ body {
 }
 
 /* --- Scrolled state: banner 折叠收起 --- */
-.phone.scrolled { --top-stack-h: 141px; }
+.phone.scrolled { --top-stack-h: 94px; }
 .phone.scrolled .ts-banner {
   height: 0;
   opacity: 0;
@@ -148,22 +148,42 @@ body {
   z-index: 9;
   pointer-events: none;
   display: flex; flex-direction: column;
+  background: #f0f0f0;                              /* 实色底，挡住 scroll 内容透出 */
   /* 跟随 filter-region 同步动画（top-stack-h 变化时 banner 收起/展开） */
   transition: top 0.22s ease;
 }
 .sticky-headers .sh-img {
   display: block;
-  width: 390px; height: 82px;
+  width: 390px; height: 28px;
+  position: absolute;
+  top: 0; left: 0;
+  transition: opacity 0.18s ease;
 }
+/* sticky-headers 下方独立的 #F0F0F0 实色块，挡住 bet-card-img 滚动到此区域时透出 */
+.sticky-gap {
+  position: absolute;
+  top: calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h));
+  left: 0; right: 0;
+  width: 390px;
+  height: 8px;
+  z-index: 1;                /* 高于 bet-card-img(static)，低于 bet-title-img(z=2) */
+  background: #f0f0f0;
+  pointer-events: none;
+  transition: top 0.22s ease;
+}
+.sticky-headers { height: 28px; }
+.sticky-headers .sh-img-02 { opacity: 0; }
+.phone.show-substatus .sh-img-01 { opacity: 0; }
+.phone.show-substatus .sh-img-02 { opacity: 1; }
 
-/* sticky 头部总高 = sub-status(28) + gap(8) + bet-title(46) = 82 (Figma 1526:125966) */
-:root { --sticky-h: 82px; }
+/* sticky 头部高 = 切图实际 390×28 (sticky-headers.png @3x → 1170×84) */
+:root { --sticky-h: 28px; }
 
 .scroll {
   position: absolute;
   /* 从 top-stack 底部开始，padding-top 预留 filter-region + sticky-headers 高度 */
-  top: var(--top-stack-h); left: 0; right: 0; bottom: 84px;
-  padding-top: calc(var(--filter-h) + var(--sticky-h));
+  top: var(--top-stack-h); left: 0; right: 0; bottom: 50px;
+  padding-top: var(--filter-h);
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;           /* 禁止横向滚动 */
@@ -200,20 +220,33 @@ body {
   top: var(--top-stack-h);
   left: 0; right: 0;
   width: 390px;
-  height: calc(var(--filter-h) + var(--sticky-h));
+  height: var(--filter-h);
   z-index: 8;                                   /* 在 filter-region(10) / sticky-headers(9) 之下 */
   pointer-events: none;
-  background: linear-gradient(
+  /* 默认状态：实色 #F0F0F0，无 backdrop blur */
+  background-color: #f0f0f0;
+  background-image: none;
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  opacity: 0;
+  transition: top 0.22s ease, height 0.22s ease, opacity 0.18s ease,
+              background-color 0.22s ease, background-image 0.22s ease,
+              backdrop-filter 0.22s ease;
+}
+.phone.scrolled-down .sticky-bg { opacity: 1; }
+/* 切换到"未开赛"sticky-headers-02 时：恢复半透明灰渐变 + 1.5px backdrop blur */
+.phone.show-substatus .sticky-bg {
+  background-color: transparent;
+  background-image: linear-gradient(
     180deg,
     rgba(236, 236, 236, 0.4) 0%,
     rgba(236, 236, 236, 0) 100%
   );
   -webkit-backdrop-filter: blur(1.5px);
           backdrop-filter: blur(1.5px);
-  opacity: 0;                                   /* 默认隐藏，滚动时由 .scrolling class 显示 */
-  transition: top 0.22s ease, height 0.22s ease, opacity 0.18s ease;
 }
-.phone.scrolled-down .sticky-bg { opacity: 1; }
+/* 滑动时 scroll padding-top 增加 8px（默认不加，避免初始留白） */
+.phone.scrolled-down .scroll { padding-top: calc(var(--filter-h)); }
 
 /* ===========================================================
    Filter region — sticky 钉在 top-stack 下方，不随内容滚动 (Figma 1525:111758)
@@ -344,7 +377,7 @@ body {
   flex-shrink: 0;
   position: relative;
 }
-.sb-item.active { background: #e6e6e6; }
+.sb-item.active { background: var(--layer-secondary-50); }
 .sb-item.active .label { color: var(--text-primary); font-weight: 600; }
 .sb-item img.logo { display: block; height: 24px; width: auto; }
 .sb-item .label { font-weight: 500; }
@@ -524,7 +557,7 @@ body {
    =========================================================== */
 .bottom-float {
   position: absolute;
-  bottom: 96px; left: 47px;
+  bottom: 62px; left: 47px;
   width: 296px; height: 50px;
   z-index: 10;
   border-radius: 999px;
@@ -707,7 +740,7 @@ body {
 .tabbar {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  width: 390px; height: 84px;
+  width: 390px; height: 50px;
   z-index: 11;
   background: rgba(255,255,255,0.94);
   backdrop-filter: blur(7.5px);
@@ -746,16 +779,6 @@ body {
 .tab-icon[data-id="sponsor"] { background-position: -261px -16.5px; }
 .tab-icon[data-id="uc"]      { background-position: -339px -16.5px; }
 
-.tabbar .bar-area {
-  height: 34px;
-  display: flex; align-items: center; justify-content: center;
-}
-.tabbar .home-indicator {
-  width: 135px; height: 5px;
-  background: #000;
-  border-radius: 100px;
-}
-
 .scroll-content {
   display: block;
   width: 390px;
@@ -764,14 +787,65 @@ body {
   pointer-events: none;
 }
 
-/* 新的赛事内容图：自带 title 在顶部 46h，用 negative margin 抵消，
-   让 title 区滚到 sticky 浮层下面被覆盖（避免 title 显示两次） */
+/* ===========================================================
+   bet-content: 4 个联赛 section × 2 张 Professional_Card
+   全代码实现 Figma 1544:18062 设计稿，无切图
+   =========================================================== */
+/* ===========================================================
+   bet-content: 4 个联赛 section × (1 title.png + 2 pro-card.png)
+   切图方案，整张 title + 整张 card 各一份
+   =========================================================== */
 .bet-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 8px;
+  width: 390px;
+  box-sizing: border-box;
+}
+.bet-content .bet-section {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border-radius: 8px;
+  /* 不能 overflow:hidden，否则破坏 sticky 子元素 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  padding: 0;
+}
+.bet-section .bet-title-img {
+  display: block;
+  background: #F0F0F0;
+  width: 374px;
+  height: 46px;
+  user-select: none;
+  pointer-events: none;
+  /* 悬浮替换：title 钉在 scroll content 顶端，下一段 title 推上来时替换 */
+  position: sticky;
+  top: 36px;
+  z-index: 2;
+}
+.bet-content .bet-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bet-content .bet-substatus-img {
   display: block;
   width: 390px;
-  height: auto;
+  height: 28px;
+  margin: 0 -8px;              /* 左右抵消 .bet-content padding 8 → 顶满 390 */
+  user-select: none;
+  pointer-events: none;
+  position: sticky;
+  top: 0;
+  z-index: 9;
+}
+.bet-section .bet-card-img {
+  display: block;
+  width: 374px;
+  height: 158px;
   user-select: none;
   pointer-events: none;
 }
 
-.footer-spacer { height: 20px; }
+.footer-spacer { height: 10px; }
