@@ -36,7 +36,7 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
   margin: 0; padding: 0;
-  /* 不设 height / overflow：让 window 是滚动容器，移动浏览器才能自动收起底栏 */
+  /* 不设 height / overflow：让 window 成为滚动容器，移动浏览器自动隐藏底栏 */
 }
 body {
   -webkit-text-size-adjust: 100%;
@@ -44,7 +44,7 @@ body {
 }
 body {
   font-family: var(--font-text);
-  background: #f0f0f0;
+  background: #151515;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -54,15 +54,12 @@ body {
    → 整页完整 fit 浏览器视口，宽高均不溢出 */
 .phone {
   width: 390px;
-  /* min-height 而非 height：保持 window 可滚动，触发 mobile 浏览器底栏自动隐藏 */
-  min-height: calc(100vh / var(--phone-scale, 1));
-  min-height: calc(100dvh / var(--phone-scale, 1));
+  margin: 0 auto;
+  /* min-height 而非 height；不要 overflow: hidden / transform —— window 是滚动容器 */
+  min-height: 100vh;
+  min-height: 100dvh;
   background: #f0f0f0;
   position: relative;
-  overflow: hidden;
-  touch-action: pan-y;
-  transform: scale(var(--phone-scale, 1));
-  transform-origin: top left;
 }
 /* 桌面浏览器（精确指针）：固定 390×844 + 投影，不缩放 */
 @media (hover: hover) and (pointer: fine) {
@@ -76,7 +73,7 @@ body {
 
 /* ===== Sticky top stack (Figma 1417:94613) ===== */
 .top-stack {
-  position: absolute; top: 0; left: 0; right: 0;
+  position: sticky; top: 0;
   width: 390px;
   height: var(--top-stack-h);
   z-index: 10;
@@ -144,9 +141,9 @@ body {
 /* === Sticky 浮层：sub-status + bet-title 钉住，不跟随 scroll 滚动 ===
    独立 absolute 定位在 scroll 容器外，z-index 低于 filter-region(10) 高于 scroll(auto) */
 .sticky-headers {
-  position: absolute;
-  top: calc(var(--top-stack-h) + var(--filter-h));  /* 紧贴 filter-region 底边 */
-  left: 0; right: 0;
+  position: sticky;
+  top: calc(var(--top-stack-h) + var(--filter-h));
+  width: 390px;
   z-index: 9;
   pointer-events: none;
   display: flex; flex-direction: column;
@@ -163,12 +160,13 @@ body {
 }
 /* sticky-headers 下方独立的 #F0F0F0 实色块，挡住 bet-card-img 滚动到此区域时透出 */
 .sticky-gap {
-  position: absolute;
+  position: fixed;
   top: calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h));
-  left: 0; right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 390px;
   height: 8px;
-  z-index: 1;                /* 高于 bet-card-img(static)，低于 bet-title-img(z=2) */
+  z-index: 1;
   background: #f0f0f0;
   pointer-events: none;
   transition: top 0.22s ease;
@@ -182,32 +180,12 @@ body {
 :root { --sticky-h: 28px; }
 
 .scroll {
-  position: absolute;
-  /* 从 top-stack 底部开始，padding-top 预留 filter-region + sticky-headers 高度 */
-  top: var(--top-stack-h); left: 0; right: 0; bottom: 50px;
-  padding-top: var(--filter-h);
+  /* 文档流，window 是滚动容器 */
+  position: relative;
+  width: 390px;
+  /* sticky-headers 已在 DOM 内紧贴上方占 sticky-h flow 空间，scroll 顺势紧接 */
+  padding-bottom: 50px;  /* 给 fixed tabbar 让位 */
   box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden;           /* 禁止横向滚动 */
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  touch-action: pan-y;          /* 触摸手势仅允许纵向 */
-  transition: top 0.22s ease, padding-top 0.22s ease;
-  /* padding 区全部渐隐：scroll 内容滚入此区域时被隐藏，sticky 浮层独立显示 */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 calc(var(--filter-h) + var(--sticky-h)),
-    #000 100%
-  );
-          mask-image: linear-gradient(
-    to bottom,
-    transparent 0,
-    #000 calc(var(--filter-h) + var(--sticky-h)),
-    #000 100%
-  );
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
 }
 .scroll::-webkit-scrollbar { display: none; }
 /* scroll 内的 img / 子元素如果宽度溢出，强制裁切到容器宽度 */
@@ -218,9 +196,10 @@ body {
    覆盖 filter-region + sticky-headers，提供顶部半透明灰渐变 + 1.5px backdrop blur
    =========================================================== */
 .sticky-bg {
-  position: absolute;
+  position: fixed;
   top: var(--top-stack-h);
-  left: 0; right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 390px;
   height: var(--filter-h);
   z-index: 8;                                   /* 在 filter-region(10) / sticky-headers(9) 之下 */
@@ -255,8 +234,8 @@ body {
    padding 8 | sportsbook 32 | gap 4 | time-balance 32 | gap 4 | sport-filter 65 | padding 8 = 153
    =========================================================== */
 .filter-region {
-  position: absolute;
-  top: var(--top-stack-h); left: 0; right: 0;
+  position: sticky;
+  top: var(--top-stack-h);
   width: 390px; height: var(--filter-h);
   z-index: 10;
   /* background 取消，露出 phone canvas 的灰底，三个 glass-pill 直接浮在背景上 */
@@ -558,8 +537,9 @@ body {
    5 项：教程 / 设置 / 未结算 / 已结算 / 刷新
    =========================================================== */
 .bottom-float {
-  position: absolute;
-  bottom: 62px; left: 47px;
+  position: fixed;
+  bottom: 62px; left: 50%;
+  transform: translateX(-50%);
   width: 296px; height: 50px;
   z-index: 10;
   border-radius: 999px;
@@ -740,8 +720,9 @@ body {
    5 项：首页 / 优惠 / 客服 / 赞助 / 我的
    =========================================================== */
 .tabbar {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
+  position: fixed;
+  left: 50%; bottom: 0;
+  transform: translateX(-50%);
   width: 390px; height: 50px;
   z-index: 11;
   background: rgba(255,255,255,0.94);

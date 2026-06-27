@@ -3,23 +3,14 @@
 // top-stack / filter-region: 虚拟滚动热区，转发 touch/wheel deltaY 给 .scroll
 (function () {
   const phone = document.querySelector('.phone');
-  const scrollEl = document.querySelector('.scroll');
-  if (!phone || !scrollEl) return;
+  if (!phone) return;
+  // 滚动容器 = window（模型 A：方便浏览器底栏自动隐藏）
+  const getScrollTop = function () { return window.scrollY || document.documentElement.scrollTop || 0; };
 
-  // === 整页根据浏览器宽度等比缩放（design width = 390px）===
-  // 仅在触屏设备启用；桌面端 @media (hover) 已经覆盖 transform: none
-  const DESIGN_W = 390;
-  const fitPhone = function () {
-    const scale = window.innerWidth / DESIGN_W;
-    document.documentElement.style.setProperty('--phone-scale', scale.toFixed(4));
-  };
-  fitPhone();
-  window.addEventListener('resize', fitPhone);
-  window.addEventListener('orientationchange', fitPhone);
-  let lastTop = scrollEl.scrollTop;
+  let lastTop = getScrollTop();
   let scrollStopTimer = null;
-  scrollEl.addEventListener('scroll', function () {
-    const t = scrollEl.scrollTop;
+  window.addEventListener('scroll', function () {
+    const t = getScrollTop();
     const delta = t - lastTop;
 
     // 滑动停止 150ms 后显示 bottom-float
@@ -54,13 +45,12 @@
 
     // sticky-headers 内容切换：滚动至第二个 bet-substatus-img（未开赛）位置时切换
     const allSubs = document.querySelectorAll('.bet-substatus-img');
-    const subEl = allSubs[1] || null;     // 第二个（未开赛 header）
+    const subEl = allSubs[1] || null;
     if (subEl) {
       const subRect = subEl.getBoundingClientRect();
-      const scrollRect = scrollEl.getBoundingClientRect();
-      const relativeY = subRect.top - scrollRect.top;
-      const filterH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--filter-h'));
-      if (relativeY <= filterH) {
+      const stickyTop = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--top-stack-h'))
+                      + parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--filter-h'));
+      if (subRect.top <= stickyTop) {
         phone.classList.add('show-substatus');
       } else {
         phone.classList.remove('show-substatus');
@@ -70,46 +60,7 @@
     lastTop = t;
   }, { passive: true });
 
-  // 把 top-stack 和 filter-region 变成虚拟滚动热区
-  const hotZones = [
-    document.querySelector('.top-stack'),
-    document.querySelector('.filter-region')
-  ].filter(Boolean);
-
-  hotZones.forEach(function (el) {
-    let lastY = 0;
-    el.addEventListener('touchstart', function (e) {
-      lastY = e.touches[0].clientY;
-    }, { passive: true });
-    el.addEventListener('touchmove', function (e) {
-      const y = e.touches[0].clientY;
-      const dy = lastY - y;
-      // scroll 顶部时向下拖（dy<0）：阻止冒泡到页面，防止 H5 浏览器下拉
-      if (scrollEl.scrollTop <= 0 && dy < 0) {
-        e.preventDefault();
-        lastY = y;
-        return;
-      }
-      scrollEl.scrollTop += dy;
-      lastY = y;
-    }, { passive: false });
-    el.addEventListener('wheel', function (e) {
-      scrollEl.scrollTop += e.deltaY;
-      e.preventDefault();
-    }, { passive: false });
-  });
-
-  // === scroll 顶部禁止下拉（防止 H5 浏览器 overscroll/下拉刷新）===
-  let scrollStartY = 0;
-  scrollEl.addEventListener('touchstart', function (e) {
-    scrollStartY = e.touches[0].clientY;
-  }, { passive: true });
-  scrollEl.addEventListener('touchmove', function (e) {
-    const y = e.touches[0].clientY;
-    if (scrollEl.scrollTop <= 0 && y > scrollStartY) {
-      e.preventDefault();
-    }
-  }, { passive: false });
+  // 模型 A：window 是滚动容器，touch / wheel 自然冒泡，无需转发热区
 
   // === ribbon 跟随 sb-row 横向滚动 ===
   // ribbon 在 filter-region 顶层独立浮动，初始 left:27px 对齐 MK 体育左上
