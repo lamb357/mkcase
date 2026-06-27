@@ -36,9 +36,8 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
   margin: 0; padding: 0;
-  /* 不设 height / overflow-y：让 window 成为滚动容器，移动浏览器自动隐藏底栏 */
-  overflow-x: hidden;            /* 禁止横向滑动 */
-  touch-action: pan-y;           /* 触摸手势仅响应纵向 */
+  /* 不设 height / overflow：让 window 成为滚动容器，移动浏览器自动隐藏底栏 */
+  touch-action: pan-y;           /* 触摸手势仅响应纵向；横向 swipe 默认不发生 */
 }
 body {
   -webkit-text-size-adjust: 100%;
@@ -186,7 +185,7 @@ body {
   position: relative;
   width: 390px;
   /* sticky-headers 已在 DOM 内紧贴上方占 sticky-h flow 空间，scroll 顺势紧接 */
-  padding-bottom: 50px;  /* 给 fixed tabbar 让位 */
+  padding-bottom: calc(50px + env(safe-area-inset-bottom));  /* 给 fixed tabbar + 安全区让位 */
   box-sizing: border-box;
 }
 .scroll::-webkit-scrollbar { display: none; }
@@ -726,6 +725,7 @@ body {
   left: 50%; bottom: 0;
   transform: translateX(-50%);
   width: 390px; height: 50px;
+  padding-bottom: env(safe-area-inset-bottom);
   z-index: 11;
   background: rgba(255,255,255,0.94);
   backdrop-filter: blur(7.5px);
