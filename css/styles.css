@@ -227,8 +227,6 @@ body {
   -webkit-backdrop-filter: blur(1.5px);
           backdrop-filter: blur(1.5px);
 }
-/* 滑动时 scroll padding-top 增加 8px（默认不加，避免初始留白） */
-.phone.scrolled-down .scroll { padding-top: calc(var(--filter-h)); }
 
 /* ===========================================================
    Filter region — sticky 钉在 top-stack 下方，不随内容滚动 (Figma 1525:111758)

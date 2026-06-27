@@ -1,66 +1,70 @@
-// ts-banner: scrollTop 阈值控制（向下滚收起、回顶展开）
-// bottom-float: 滚动方向控制（向上滑立刻出现、向下滑立刻消失）
-// top-stack / filter-region: 虚拟滚动热区，转发 touch/wheel deltaY 给 .scroll
+// 模型 A：window 是滚动容器，scroll handler 用 rAF 节流避免卡顿
 (function () {
   const phone = document.querySelector('.phone');
   if (!phone) return;
-  // 滚动容器 = window（模型 A：方便浏览器底栏自动隐藏）
-  const getScrollTop = function () { return window.scrollY || document.documentElement.scrollTop || 0; };
 
-  let lastTop = getScrollTop();
-  let scrollStopTimer = null;
-  window.addEventListener('scroll', function () {
-    const t = getScrollTop();
+  const getY = function () { return window.scrollY || document.documentElement.scrollTop || 0; };
+
+  // 缓存 CSS 变量（避免每帧 getComputedStyle）
+  let topStackH = 0, filterH = 0;
+  const refreshVars = function () {
+    const cs = getComputedStyle(document.documentElement);
+    topStackH = parseFloat(cs.getPropertyValue('--top-stack-h')) || 0;
+    filterH = parseFloat(cs.getPropertyValue('--filter-h')) || 0;
+  };
+  refreshVars();
+  window.addEventListener('resize', refreshVars, { passive: true });
+  window.addEventListener('orientationchange', refreshVars, { passive: true });
+
+  // 缓存目标元素
+  const subEl = document.querySelectorAll('.bet-substatus-img')[1] || null;
+
+  let lastTop = getY();
+  let pendingRaf = 0;
+  let stopTimer = 0;
+
+  const onFrame = function () {
+    pendingRaf = 0;
+    const t = getY();
     const delta = t - lastTop;
 
-    // 滑动停止 150ms 后显示 bottom-float
-    clearTimeout(scrollStopTimer);
-    scrollStopTimer = setTimeout(function () {
-      phone.classList.remove('float-hidden');
-    }, 150);
+    // 1. sticky-bg：离开顶部就显示
+    if (t > 0) phone.classList.add('scrolled-down');
+    else phone.classList.remove('scrolled-down');
 
-    // sticky-bg 在滚动离开顶部后保持显示，回到顶部消失
-    if (t > 0) {
-      phone.classList.add('scrolled-down');
-    } else {
-      phone.classList.remove('scrolled-down');
+    // 2. banner 折叠（迟滞防抖 4 / 8 阈值）
+    if (t > 8) {
+      if (!phone.classList.contains('scrolled')) phone.classList.add('scrolled');
+    } else if (t <= 4) {
+      if (phone.classList.contains('scrolled')) phone.classList.remove('scrolled');
     }
 
-    // banner 收起/展开（位置阈值，迟滞防抖）
-    if (t > 8 && !phone.classList.contains('scrolled')) {
-      phone.classList.add('scrolled');
-    } else if (t <= 4 && phone.classList.contains('scrolled')) {
-      phone.classList.remove('scrolled');
-    }
-
-    // bottom-float 方向控制（噪声门槛 2px）
+    // 3. bottom-float 方向：向下滚隐藏、向上滚显示（≥2px 噪声门）
     if (Math.abs(delta) > 2) {
-      if (delta > 0) {
-        phone.classList.add('float-hidden');     // 向下滚 → 隐藏
-      } else {
-        phone.classList.remove('float-hidden');  // 向上滚 → 显示
-      }
+      if (delta > 0) phone.classList.add('float-hidden');
+      else phone.classList.remove('float-hidden');
     }
-    if (t <= 0) phone.classList.remove('float-hidden'); // 顶部强制显示
+    if (t <= 0) phone.classList.remove('float-hidden');
 
-    // sticky-headers 内容切换：滚动至第二个 bet-substatus-img（未开赛）位置时切换
-    const allSubs = document.querySelectorAll('.bet-substatus-img');
-    const subEl = allSubs[1] || null;
+    // 4. show-substatus：第二个 bet-substatus-img 上推到 sticky 位置时切换
     if (subEl) {
-      const subRect = subEl.getBoundingClientRect();
-      const stickyTop = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--top-stack-h'))
-                      + parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--filter-h'));
-      if (subRect.top <= stickyTop) {
-        phone.classList.add('show-substatus');
-      } else {
-        phone.classList.remove('show-substatus');
-      }
+      const subTop = subEl.getBoundingClientRect().top;
+      if (subTop <= topStackH + filterH) phone.classList.add('show-substatus');
+      else phone.classList.remove('show-substatus');
     }
 
     lastTop = t;
-  }, { passive: true });
+  };
 
-  // 模型 A：window 是滚动容器，touch / wheel 自然冒泡，无需转发热区
+  window.addEventListener('scroll', function () {
+    // rAF 节流，每帧最多执行一次
+    if (!pendingRaf) pendingRaf = requestAnimationFrame(onFrame);
+    // 滑动停止 180ms 后让 bottom-float 重新出现
+    clearTimeout(stopTimer);
+    stopTimer = setTimeout(function () {
+      phone.classList.remove('float-hidden');
+    }, 180);
+  }, { passive: true });
 
   // === ribbon 跟随 sb-row 横向滚动 ===
   // ribbon 在 filter-region 顶层独立浮动，初始 left:27px 对齐 MK 体育左上
