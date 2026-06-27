@@ -36,7 +36,9 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body {
   margin: 0; padding: 0;
-  /* 不设 height / overflow：让 window 成为滚动容器，移动浏览器自动隐藏底栏 */
+  /* 不设 height / overflow-y：让 window 成为滚动容器，移动浏览器自动隐藏底栏 */
+  overflow-x: hidden;            /* 禁止横向滑动 */
+  touch-action: pan-y;           /* 触摸手势仅响应纵向 */
 }
 body {
   -webkit-text-size-adjust: 100%;
@@ -802,9 +804,9 @@ body {
   height: 46px;
   user-select: none;
   pointer-events: none;
-  /* 悬浮替换：title 钉在 scroll content 顶端，下一段 title 推上来时替换 */
+  /* 悬浮替换：钉在 top-stack + filter-region + bet-substatus 之下 */
   position: sticky;
-  top: 36px;
+  top: calc(var(--top-stack-h) + var(--filter-h) + var(--sticky-h));
   z-index: 2;
 }
 .bet-content .bet-group {
@@ -819,8 +821,9 @@ body {
   margin: 0 -8px;              /* 左右抵消 .bet-content padding 8 → 顶满 390 */
   user-select: none;
   pointer-events: none;
+  /* 钉在 top-stack + filter-region 下方 */
   position: sticky;
-  top: 0;
+  top: calc(var(--top-stack-h) + var(--filter-h));
   z-index: 9;
 }
 .bet-section .bet-card-img {
